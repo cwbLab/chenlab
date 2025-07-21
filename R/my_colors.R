@@ -61,7 +61,7 @@ heatmap_color_5 <- function(){
 
 #' @export
 heatmap_color_blue <- function(){
-  heatmap_color_blue() <- c("#FFFFFF", "#007AFF" )
+  heatmap_color_blue <- c("#FFFFFF", "#007AFF" )
   return( heatmap_color_blue )
 }
 
