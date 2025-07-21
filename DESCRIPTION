@@ -19,3 +19,5 @@ Imports:
 	limma,
 	scater,
 	stringr
+URL: https://github.com/cwb528/chenlab
+BugReports: https://github.com/cwb528/chenlab/issues
