@@ -4,18 +4,21 @@
 \alias{convert_id}
 \title{转换基因ID}
 \usage{
-convert_id(genes, ref, ip.type, op.type)
+convert_id(genes, ref, ip.type, op.type, type = "first", mc.cores = NULL)
 }
 \arguments{
 \item{genes}{基因向量名}
 
 \item{ref}{参考的org对象}
 
-\item{ip.type}{输入基因向量的类型}
+\item{ip.type}{输入基因向量的基因类型，可输入多个类型的向量。}
 
-\item{op.type}{输出基因向量的类型}
+\item{op.type}{输出基因向量的类型，可输入多个类型的向量。}
+
+\item{type}{输出的模式。可选first、any。为first时，结果与输入的基因向量一一对应。为any时，一个基因会有多行结果的情况。}
+
+\item{mc.cores}{默认使用最大计算资源。}
 }
 \description{
-转换基因ID。仅用于一种ID的转换，返回第一个匹配的结果。
-结果为一个数据框，与输入的基因向量一一对应。
+该函数AnnotationDbi中mapIds和select函数的封装，用于转换基因ID。
 }

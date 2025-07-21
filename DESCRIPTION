@@ -8,16 +8,17 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Imports: 
-    data.table,
-    dplyr,
+Imports:
 	AnnotationDbi,
-	pbmcapply,
-	ggpubr,
+    data.table,
 	DESeq2,
+    dplyr,
 	edgeR,
+	ggpubr,
 	limma,
+	parallel,
+	pbmcapply,
 	scater,
-	stringr
-URL: https://github.com/cwb528/chenlab
-BugReports: https://github.com/cwb528/chenlab/issues
+	stringr,
+URL: https://github.com/cwbLab/chenlab
+

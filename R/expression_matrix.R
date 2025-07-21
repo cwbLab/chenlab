@@ -1,28 +1,62 @@
 #' 转换基因ID
 #'
 #' @description
-#' 转换基因ID。仅用于一种ID的转换，返回第一个匹配的结果。
-#' 结果为一个数据框，与输入的基因向量一一对应。
+#' 该函数AnnotationDbi中mapIds和select函数的封装，用于转换基因ID。
 #'
 #' @param genes 基因向量名
 #' @param ref 参考的org对象
-#' @param ip.type 输入基因向量的类型
-#' @param op.type 输出基因向量的类型
+#' @param ip.type 输入基因向量的基因类型，可输入多个类型的向量。
+#' @param op.type 输出基因向量的类型，可输入多个类型的向量。
+#' @param type 输出的模式。可选first、any。为first时，结果与输入的基因向量一一对应。为any时，一个基因会有多行结果的情况。
+#' @param mc.cores 默认使用最大计算资源。
 #'
 #' @export
-convert_id <- function( genes, ref ,ip.type, op.type ){
+convert_id <- function( genes, ref ,ip.type, op.type , type = 'first' ,mc.cores = NULL ){
+  library(pbmcapply)
+  library(data.table)
   #
-  ci <- AnnotationDbi::mapIds(x = ref,
-                              keys=genes,
-                              column=op.type,
-                              keytype = ip.type,
-                              multiVals = 'first'
-  )
+  if( is.null( mc.cores  ) ){  mc.cores = parallel::detectCores()   }
   #
-  res <- data.frame( raw = genes, op.type = ci  )
-  colnames(res) <- c('raw', op.type )
-  #
-  return(  res  )
+  re.type = type
+  if( type == 'any' ){ re.type = 'list'   }
+
+  op <- lapply( ip.type , function(type){
+    #
+    if( length(op.type) == 1 ){
+      #
+      ci <- AnnotationDbi::mapIds(x = ref,
+                                  keys=genes,
+                                  column=op.type,
+                                  keytype = type,
+                                  multiVals = re.type
+      )
+      #
+      if( re.type == 'first' ){
+        res <- data.frame( raw = genes, op.type = ci  )
+        colnames(res) <- c( type , op.type )
+      }else{
+        res <- pbmclapply(1:length(ci), function(x){
+          temp = data.table( raw = names(ci)[x], op.type = ci[[ x ]]  )
+          return( temp )
+        },mc.cores = mc.cores )
+        res <- data.frame(rbindlist( res  ))
+        colnames(res) <- c( type , op.type )
+      }
+    }else{
+      #
+      res <- AnnotationDbi::select(x = ref,
+                                   keys=genes,
+                                   columns=op.type,
+                                   keytype = type
+      )
+      res <- data.frame( res  )
+    }
+    #输出
+    return(res)
+  })
+  names(op) <- ip.type
+  #最终输出
+  return(  op  )
 }
 
 
