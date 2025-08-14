@@ -19,7 +19,7 @@ gg.op(
 
 \item{pre}{文件名前缀}
 
-\item{sur}{文件名后缀。默认是'.jpeg'}
+\item{sur}{文件名后缀。默认是'.jpg'}
 
 \item{file}{完整的文件名。调用该参数时，会忽略pre和sur}
 
