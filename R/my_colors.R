@@ -81,7 +81,7 @@ volcano_color <- function(){
 #'
 #' @param plot ggplot2对象
 #' @param pre 文件名前缀
-#' @param sur 文件名后缀。默认是'.jpeg'
+#' @param sur 文件名后缀。默认是'.jpg'
 #' @param file 完整的文件名。调用该参数时，会忽略pre和sur
 #' @param res DPI
 #' @param height 图片的高度
