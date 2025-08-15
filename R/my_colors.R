@@ -40,10 +40,10 @@ group_colors <- function( number , continuous = F ){
   )
   #
   if( continuous ){
-    return( group_color[1:number] )
+    return( group_color_continuous[1:number] )
 
   }else{
-    return( group_color_continuous[1:number] )
+    return( group_color[1:number] )
   }
 }
 
