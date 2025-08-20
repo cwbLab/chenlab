@@ -108,7 +108,7 @@ gg.op <- function( plot, pre = NULL, sur = '.jpg' ,
     )
   )
   #
-  message( paste0( filename ,' | ',Sys.time() , '\n'  )  )
+  message( paste0( filename ,' | ',  format(Sys.time(), "%Y-%m-%d %H:%M:%S")  , '\n'  )  )
   #
 }
 
