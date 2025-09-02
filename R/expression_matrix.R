@@ -1,17 +1,17 @@
-#' 转换基因ID
+#' Convert gene IDs
 #'
 #' @description
-#' 该函数AnnotationDbi中mapIds和select函数的封装，用于转换基因ID。
+#' This function is a wrapper around mapIds and select from AnnotationDbi, used for converting gene IDs.
 #'
-#' @param genes 基因向量名
-#' @param ref 参考的org对象
-#' @param ip.type 输入基因向量的基因类型，可输入多个类型的向量。
-#' @param op.type 输出基因向量的类型，可输入多个类型的向量。
-#' @param type 输出的模式。可选first、any。为first时，结果与输入的基因向量一一对应。为any时，一个基因会有多行结果的情况。
-#' @param mc.cores 默认使用最大计算资源。
+#' @param genes Names of the gene vector
+#' @param ref Reference org annotation object
+#' @param ip.type A vector containing one or more types can be provided
+#' @param op.type A vector containing one or more types can be provided
+#' @param type Output mode. Options are 'first' or 'any'. When 'first', the result corresponds one-to-one with the input gene vector. When 'any', a single gene may produce multiple rows in the result.
+#' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used
 #'
 #' @export
-convert_id <- function( genes, ref ,ip.type, op.type , type = 'first' ,mc.cores = NULL ){
+wb.convert_id <- function( genes, ref ,ip.type, op.type , type = 'first' ,mc.cores = NULL ){
   library(pbmcapply)
   library(data.table)
   #
@@ -51,31 +51,31 @@ convert_id <- function( genes, ref ,ip.type, op.type , type = 'first' ,mc.cores 
       )
       res <- data.frame( res  )
     }
-    #输出
+    #
     return(res)
   })
   names(op) <- ip.type
-  #最终输出
+  #output
   return(  op  )
 }
 
 
 
 
-#' 处理重复的行
+#' Process duplicate row names in the input matrix
 #' @description
-#' 转换ID后，可能会有多个行对应同一ID的情况，可以使用该函数进行处理，保留唯一行。
+#' After ID conversion, multiple rows may correspond to the same ID. This function can be used to process them and retain unique rows
 #'
 #'
-#' @param exp 表达矩阵
-#' @param raw_row 原始的基因向量（行名）
-#' @param convert_name 转换后的基因向量（与raw_row对应）。
-#' @param type 保留数据的方式。可以选max、min、mean。为mean时，返回多行数据的均值。
-#' @param mc.cores 默认调用最多线程
+#' @param exp Expression matrix
+#' @param raw_row Original gene vector (usually the row names)
+#' @param convert_name onverted gene vector (corresponding to raw_row)
+#' @param type Method for retaining data. Options are 'max', 'min', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned
+#' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used
 #'
 #' @export
 
-exp_matrix_unique_row <- function( exp  , raw_row , convert_name , type = 'max' ,  mc.cores = NULL  ){
+wb.mtx_unique_row <- function( exp  , raw_row , convert_name , type = 'max' ,  mc.cores = NULL  ){
   #
   library(  pbmcapply  )
   library( dplyr )
@@ -86,16 +86,16 @@ exp_matrix_unique_row <- function( exp  , raw_row , convert_name , type = 'max' 
   if( is.null( mc.cores  ) ){  mc.cores = parallel::detectCores()  }
 
   exp$Description <- convert_name
-  #统计convert基因的个数
+  #
   gene_counts <- table( exp$Description  ) %>% as.data.frame()
   gene_counts <- gene_counts[ order(gene_counts$Freq,decreasing = T)  ,]
 
 
-  #先选择没有重复的基因，sdata1
+  #sdata1
   samples <- colnames(sdata1)
   sdata1 <- exp[ exp$Description %in% gene_counts$Var1[gene_counts$Freq == 1]  , ]
 
-  #处理有重复的基因，sdata2
+  #sdata2
   dup_genes <-  gene_counts$Var1[gene_counts$Freq != 1]
   sdata2 <- pbmclapply(dup_genes, function(x){
     sd <- exp[ exp$Description == x ,   ]
@@ -113,17 +113,17 @@ exp_matrix_unique_row <- function( exp  , raw_row , convert_name , type = 'max' 
   } ,mc.cores = mc.cores ) %>% rbindlist() %>% as.data.frame()
   colnames(sdata2) <- samples
 
-  #合并最终的数据
+  #merge
   final_data <- rbind( sdata1 , sdata2   ) %>% as.data.frame()
   rownames(final_data) <- final_data$Description
   final_data <- final_data[ ,  -ncol( final_data ) ] %>% as.data.frame()
 
-  #把数据转换成 数值
+  #numeric
   genes <- rownames(final_data)
   numeric_data <- apply(  final_data , 2 , as.numeric ) %>% as.data.frame()
   rownames(numeric_data) <- genes
 
-  #返回数据
+  #return
   return(   numeric_data   )
 
 }

@@ -1,14 +1,14 @@
 
 
-#' 获取多组的颜色
+#' Obtain multiple sets of colors
 #' @description
-#' 最多50组
+#' Up to 50 groups
 #'
-#' @param number 颜色数目
-#' @param continuous 是否需要连续的色阶
+#' @param number Number of colors to return
+#' @param continuous Whether to return a continuous color scale
 
 #' @export
-group_colors <- function( number , continuous = F ){
+wb.group_colors <- function( number , continuous = F ){
   #
   group_color <- c(
     "#FF3B30", "#007AFF", "#CC00CC", "#00CCFF", "#FDB9A0",
@@ -24,17 +24,17 @@ group_colors <- function( number , continuous = F ){
   )
   #
   group_color_continuous <-  c(
-    # 暖色系
+    # warm colors
     "#FFEA00", "#FF7F50", "#FFAB40", "#FF4500", "#FFC8DD", "#FAD02E",
     "#FBCEB1", "#FF9AA2", "#FFD166", "#FFCC99", "#FFB347", "#FF6961",
     "#FF9A8B", "#FF6B6B", "#FFA07A", "#FFD700", "#FFEC8B", "#FFF44F",
 
-    # 冷色系
+    # cool colors
     "#A0E6C3", "#6EC5E9", "#88D8C0", "#B0E0E6", "#48D1CC", "#E2F0CB",
     "#87CEEB", "#D4FF59", "#B4F0F0", "#C1E1C1", "#B5EAD7", "#77DD77",
     "#AEC6CF", "#B0E57C", "#89CFF0", "#99FFFF", "#AAF0D1", "#C6E2FF",
 
-    # 中间色系
+    # neutral colors
     "#DDA0DD", "#FFB7C5", "#C8A2C8", "#C3B1E1", "#FF9E9D", "#F49AC2",
     "#FFB6C1", "#FFC1E1", "#F4C2C2", "#E0BBE4", "#D291BC", "#FADADD"
   )
@@ -48,48 +48,49 @@ group_colors <- function( number , continuous = F ){
 }
 
 #' @export
-heatmap_color_3 <- function(){
+wb.heatmap_color_3 <- function(){
   heatmap_color_3 <- c("#007AFF", "#FFFFFF", "#FF3B30")
   return( heatmap_color_3 )
 }
 
 #' @export
-heatmap_color_5 <- function(){
+wb.heatmap_color_5 <- function(){
   heatmap_color_5 <- c("#0066CC", "#00CCFF", "#FFFFFF", "#FF00FF", "#CC00CC")
   return( heatmap_color_5 )
 }
 
 #' @export
-heatmap_color_blue <- function(){
+wb.heatmap_color_blue <- function(){
   heatmap_color_blue <- c("#FFFFFF", "#007AFF" )
   return( heatmap_color_blue )
 }
 
 #' @export
-heatmap_color_orange <- function(){
+wb.heatmap_color_orange <- function(){
   heatmap_color_orange <- c("#FFFFFF", "#FF3B30" )
   return( heatmap_color_orange )
 }
 
 #' @export
-volcano_color <- function(){
+wb.volcano_color <- function(){
   volcano_color <- c("#007AFF", "#FFFFFF", "#FF3B30")
   return( volcano_color )
 }
 
-#' ggplot2对象的预览和保存
+###############################################################
+#' Previewing and saving ggplot2 objects
 #'
-#' @param plot ggplot2对象
-#' @param pre 文件名前缀
-#' @param sur 文件名后缀。默认是'.jpg'
-#' @param file 完整的文件名。调用该参数时，会忽略pre和sur
-#' @param res DPI
-#' @param height 图片的高度
-#' @param width 图片的宽度
+#' @param plot ggplot2 object
+#' @param pre File name prefix
+#' @param sur File name suffix, default is '.jpg'
+#' @param file Full file name. If this parameter is provided, pre and sur will be ignored.
+#' @param res Dots per inch (DPI) resolution
+#' @param h Height of the image
+#' @param w Width of the image
 #'
 #' @export
-gg.op <- function( plot, pre = NULL, sur = '.jpg' ,
-                   file = NULL , res = 600 , height = 5 , width = 5  ){
+wb.ggop <- function( plot, pre = NULL, sur = '.jpg' ,
+                   file = NULL , res = 600 , h = 5 , w = 5  ){
   #
   if ( is.null(file)  ){
     filename = paste0( pre , sur  )
@@ -97,18 +98,18 @@ gg.op <- function( plot, pre = NULL, sur = '.jpg' ,
     filename = file
   }
   #
-  p.view <- plot + ggview::canvas(   height = height , width =  width, dpi = res  )
+  p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res  )
   print(p.view)
   #
   suppressMessages(
     ggpubr::ggexport( plot , filename = filename,
                       res = res ,
-                      height = height * res ,
-                      width = width * res
+                      height = h * res ,
+                      width = w * res
     )
   )
   #
-  message( paste0( filename ,' | ',Sys.time() , '\n'  )  )
+  message( paste0( filename ,' | ', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '\n'  )  )
   #
 }
 

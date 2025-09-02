@@ -1,20 +1,20 @@
 
-#' 差异表达基因分析
+#' Perform differential gene expression analysis
 #' @description
-#' 自动调用DESeq2、edgeR和limma包识别差异表达基因。
+#' Automatically calls the DESeq2, edgeR, and limma packages to identify differentially expressed genes
 #'
 #'
-#' @param counts 数据框。counts矩阵
-#' @param tpm 数据框。tpm矩阵
-#' @param group 样本的分组向量（最多两种分组）
-#' @param contrast 比较向量。如c('M','N')，此时以N对照，FC为M/N
-#' @param p.adj 差异表达基因的p值的阈值
-#' @param FC 差异表达基因的FC的阈值
-#' @param write 为T时，各算法的差异表达基因分析结果会自动保存至本地。
+#' @param counts Data frame object containing the counts matrix
+#' @param tpm Data frame object containing the TPM matrix
+#' @param group Grouping vector for samples (up to two groups)
+#' @param contrast Comparison vector, e.g., c('M', 'N'). Here, 'N' is the control, and fold change (FC) is calculated as M/N
+#' @param p.adj P-value threshold
+#' @param FC Fold change (FC) threshold
+#' @param write If set to TRUE, the results of differential gene expression analysis from each algorithm will be automatically saved locally
 #'
 #' @export
 #'
-deg_pipeline <- function( counts,tpm,group,contrast,p.adj=0.05,FC=2,write = F){
+wb.deg_pipeline <- function( counts,tpm,group,contrast,p.adj=0.05,FC=2,write = F){
   ipcounts <- counts
   iptpm <- tpm
   ipgroups <- group

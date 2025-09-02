@@ -1,15 +1,15 @@
 
-#' 计算CPM、TPM、FPKM
+#' Calculate CPM, TPM, and FPKM
 #' @description
-#' 基于featurecounts算法的原始输出结果，分别计算CPM、TPM、FPKM。
+#' Raw output files from the featureCounts algorithm, used to calculate CPM, TPM, and FPKM, respectively
 #'
-#' @param count_file featurecounts原始输出文件的绝对路径
-#' @param op.dir 保存结果文件的路径
+#' @param count_file Absolute path to the raw output file from featureCounts
+#' @param op.dir Directory to save the result files
 #'
 #' @export
 #'
 
-data_normalize <- function( count_file , op.dir = '.' ){
+wb.data_normalize <- function( count_file , op.dir = '.' ){
   library(scater)
   library(stringr)
 
