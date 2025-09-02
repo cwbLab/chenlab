@@ -1,3 +1,13 @@
+#' Multithreaded lapply
+#' @description
+#' A version of lapply that uses multiple threads for parallel computation
+#'
+#' @param X Same as the X parameter in mclapply
+#' @param FUN Same as the FUN parameter in mclapply
+#' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used
+#' @param pb Show progress bar. Default is TRUE
+#' @param time Display execution time. Default is TRUE
+#'
 #' @export
 wb.mc <- function( X, FUN, mc.cores = NULL, pb =T ,time = T ){
   start_time <- Sys.time()
