@@ -82,14 +82,14 @@ wb.volcano_color <- function(){
 #'
 #' @param plot ggplot2 object
 #' @param pre File name prefix
-#' @param sur File name suffix, default is '.jpg'
-#' @param file Full file name. If this parameter is provided, pre and sur will be ignored.
+#' @param sur File name suffix, default is '.png'
+#' @param file Full file name. If this parameter is provided, pre and sur will be ignored
 #' @param res Dots per inch (DPI) resolution
 #' @param h Height of the image
 #' @param w Width of the image
 #'
 #' @export
-wb.ggop <- function( plot, pre = NULL, sur = '.jpg' ,
+wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
                    file = NULL , res = 600 , h = 5 , w = 5  ){
   #
   if ( is.null(file)  ){
