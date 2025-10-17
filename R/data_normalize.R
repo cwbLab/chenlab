@@ -43,7 +43,7 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
     data$Genes <- rownames(data)
     data <- data[,c(ncol(data),1:(ncol(data)-1))]
     write.table(data,
-                file =  paste( op.dir  ,paste(i,'.chenlab_output.txt',sep = '_') ,sep='/' ),
+                file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
                 sep = '\t',quote = F,row.names = F)
   }
   print('Mission Finished')
