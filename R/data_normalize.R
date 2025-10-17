@@ -23,10 +23,12 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
   ref_data <- raw_data[,c(1:5)]
   ref_data$gene <- rownames(ref_data)
   ref_data <- dplyr::select(ref_data,gene,everything())
-  write.table(ref_data,
-              file = paste( op.dir,'gene_information_by_featurecounts.txt',sep='/' ),
-              sep = '\t',quote = F,row.names = F)
-
+  if( is.character(opdir) ){
+    write.table(ref_data,
+                file = paste( op.dir,'gene_information_by_featurecounts.txt',sep='/' ),
+                sep = '\t',quote = F,row.names = F)
+  }
+  
   #calculate
   lengths <- as.integer(raw_data$Length)
   count <- as.data.frame(apply(raw_data[,-c(1:5)],2,as.integer))
