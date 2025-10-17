@@ -41,9 +41,8 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
   for ( i in names(sce@assays@data)){
     data <- as.data.frame(assay(sce,i))
     colnames(data) <- raw_title
-    data$Genes <- rownames(data)
-    data <- data[,c(ncol(data),1:(ncol(data)-1))]
-    write.table(data,
+
+    write.table( cbind( Gens = rownames(data)  , data),
                 file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
                 sep = '\t',quote = F,row.names = F)
     op[[i]] <- data
