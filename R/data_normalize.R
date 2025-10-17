@@ -17,7 +17,7 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
   #input
   raw_data<- read.table(count_file,sep = '\t',header = T,row.names = 1,check.names = F)
   raw_data<- raw_data[rownames(raw_data) != '',]
-  raw_title <- unlist(str_split(readLines(myfile,n=2)[2],'\\t'))[-(1:6)]
+  raw_title <- unlist(str_split(readLines(count_file,n=2)[2],'\\t'))[-(1:6)]
 
   #get reference information
   ref_data <- raw_data[,c(1:5)]
