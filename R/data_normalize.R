@@ -48,6 +48,8 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
                 sep = '\t',quote = F,row.names = F)
     op[[i]] <- data
   }
+  return(op)
+  
   print('Mission Finished')
   ###end
 }
