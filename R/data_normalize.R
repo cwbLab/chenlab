@@ -37,6 +37,7 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
   cpm(sce) <- calculateCPM(sce)
 
   #output
+  op <- list()
   for ( i in names(sce@assays@data)){
     data <- as.data.frame(assay(sce,i))
     colnames(data) <- raw_title
@@ -45,6 +46,7 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
     write.table(data,
                 file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
                 sep = '\t',quote = F,row.names = F)
+    op[[i]] <- data
   }
   print('Mission Finished')
   ###end
