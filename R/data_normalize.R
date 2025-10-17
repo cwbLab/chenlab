@@ -23,7 +23,7 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
   ref_data <- raw_data[,c(1:5)]
   ref_data$gene <- rownames(ref_data)
   ref_data <- dplyr::select(ref_data,gene,everything())
-  if( is.character(opdir) ){
+  if( is.character(op.dir) ){
     write.table(ref_data,
                 file = paste( op.dir,'gene_information_by_featurecounts.txt',sep='/' ),
                 sep = '\t',quote = F,row.names = F)
@@ -44,7 +44,7 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
     data <- as.data.frame(assay(sce,i))
     colnames(data) <- raw_title
 
-  	if( is.character(opdir) ){
+  	if( is.character(op.dir) ){
   		write.table( cbind( Gens = rownames(data)  , data),
   					file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
   					sep = '\t',quote = F,row.names = F)
