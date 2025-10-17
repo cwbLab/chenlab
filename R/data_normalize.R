@@ -4,7 +4,7 @@
 #' Raw output files from the featureCounts algorithm, used to calculate CPM, TPM, and FPKM, respectively
 #'
 #' @param count_file Absolute path to the raw output file from featureCounts
-#' @param op.dir Directory to save the result files
+#' @param op.dir Directory to save the result files. If set to NULL, the results will not be automatically saved to the local disk.
 #'
 #' @export
 #'
@@ -42,9 +42,11 @@ wb.data_normalize <- function( count_file , op.dir = '.' ){
     data <- as.data.frame(assay(sce,i))
     colnames(data) <- raw_title
 
-    write.table( cbind( Gens = rownames(data)  , data),
-                file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
-                sep = '\t',quote = F,row.names = F)
+  	if( is.character(opdir) ){
+  		write.table( cbind( Gens = rownames(data)  , data),
+  					file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
+  					sep = '\t',quote = F,row.names = F)
+  	}
     op[[i]] <- data
   }
   return(op)
