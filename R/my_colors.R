@@ -85,8 +85,8 @@ wb.volcano_color <- function(){
 #' @param sur File name suffix, default is '.png'
 #' @param file Full file name. If this parameter is provided, pre and sur will be ignored
 #' @param res Dots per inch (DPI) resolution
-#' @param h Height of the image
-#' @param w Width of the image
+#' @param h Height of the image (inch). The final image height is (h × res) pixels
+#' @param w Width of the image (inch). The final image width is (w × res) pixels
 #'
 #' @export
 wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
