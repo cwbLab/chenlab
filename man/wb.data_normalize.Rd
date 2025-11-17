@@ -9,7 +9,7 @@ wb.data_normalize(count_file, op.dir = ".")
 \arguments{
 \item{count_file}{Absolute path to the raw output file from featureCounts}
 
-\item{op.dir}{Directory to save the result files}
+\item{op.dir}{Directory to save the result files. If set to NULL, the results will not be automatically saved to the local disk.}
 }
 \description{
 Raw output files from the featureCounts algorithm, used to calculate CPM, TPM, and FPKM, respectively

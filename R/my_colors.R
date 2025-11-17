@@ -47,35 +47,7 @@ wb.group_colors <- function( number , continuous = F ){
   }
 }
 
-#' @export
-wb.heatmap_color_3 <- function(){
-  heatmap_color_3 <- c("#007AFF", "#FFFFFF", "#FF3B30")
-  return( heatmap_color_3 )
-}
 
-#' @export
-wb.heatmap_color_5 <- function(){
-  heatmap_color_5 <- c("#0066CC", "#00CCFF", "#FFFFFF", "#FF00FF", "#CC00CC")
-  return( heatmap_color_5 )
-}
-
-#' @export
-wb.heatmap_color_blue <- function(){
-  heatmap_color_blue <- c("#FFFFFF", "#007AFF" )
-  return( heatmap_color_blue )
-}
-
-#' @export
-wb.heatmap_color_orange <- function(){
-  heatmap_color_orange <- c("#FFFFFF", "#FF3B30" )
-  return( heatmap_color_orange )
-}
-
-#' @export
-wb.volcano_color <- function(){
-  volcano_color <- c("#007AFF", "#FFFFFF", "#FF3B30")
-  return( volcano_color )
-}
 
 ###############################################################
 #' Previewing and saving ggplot2 objects
@@ -87,19 +59,17 @@ wb.volcano_color <- function(){
 #' @param res Dots per inch (DPI) resolution
 #' @param h Height of the image (inch). The final image height is (h × res) pixels
 #' @param w Width of the image (inch). The final image width is (w × res) pixels
+#' @param model There are two preview modes: (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R. (2) F2 shows the image that has already been saved locally. By default, preview mode F1 is used.
 #'
 #' @export
 wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
-                   file = NULL , res = 600 , h = 5 , w = 5  ){
+                     file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
   #
   if ( is.null(file)  ){
     filename = paste0( pre , sur  )
   }else{
     filename = file
   }
-  #
-  p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res  )
-  print(p.view)
   #
   suppressMessages(
     ggpubr::ggexport( plot , filename = filename,
@@ -109,7 +79,22 @@ wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
     )
   )
   #
-  message( paste0( filename ,' | ', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '\n'  )  )
+  if ( model == 'F1'  ){
+    p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
+    print(p.view)
+  }
+  if ( model == 'F2'  ){
+    panel_size <- grDevices::dev.size( "px" )
+    raw.image <- magick::image_read(  filename  )
+    raw.image.scale <- magick::image_resize( raw.image,
+                                             paste0(  min( panel_size[1] / magick::image_info( raw.image )$width - 0.005,
+                                                           panel_size[2] / magick::image_info( raw.image )$height - 0.005 ) * 100, "%" )
+    )
+    temp <- capture.output(  suppressMessages( print(raw.image.scale )  ) )
+  }
+
+  #
+  message( paste0( format(Sys.time(), "%Y-%m-%d %H:%M:%S") , ' | ', filename, '\n'  )  )
   #
 }
 

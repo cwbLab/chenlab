@@ -16,10 +16,13 @@ Imports:
 	edgeR,
 	ggpubr,
 	ggview,
+	grDevices,
 	limma,
+	magick,
 	parallel,
 	pbmcapply,
 	scater,
+	scCustomize,
 	stringr,
 URL: https://github.com/cwbLab/chenlab
 

@@ -4,22 +4,33 @@
 \alias{wb.ggop}
 \title{Previewing and saving ggplot2 objects}
 \usage{
-wb.ggop(plot, pre = NULL, sur = ".jpg", file = NULL, res = 600, h = 5, w = 5)
+wb.ggop(
+  plot,
+  pre = NULL,
+  sur = ".png",
+  file = NULL,
+  res = 600,
+  h = 5,
+  w = 5,
+  model = "F1"
+)
 }
 \arguments{
 \item{plot}{ggplot2 object}
 
 \item{pre}{File name prefix}
 
-\item{sur}{File name suffix, default is '.jpg'}
+\item{sur}{File name suffix, default is '.png'}
 
-\item{file}{Full file name. If this parameter is provided, pre and sur will be ignored.}
+\item{file}{Full file name. If this parameter is provided, pre and sur will be ignored}
 
 \item{res}{Dots per inch (DPI) resolution}
 
-\item{h}{Height of the image}
+\item{h}{Height of the image (inch). The final image height is (h × res) pixels}
 
-\item{w}{Width of the image}
+\item{w}{Width of the image (inch). The final image width is (w × res) pixels}
+
+\item{model}{There are two preview modes: (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R. (2) F2 shows the image that has already been saved locally. By default, preview mode F1 is used.}
 }
 \description{
 Previewing and saving ggplot2 objects
