@@ -1,0 +1,33 @@
+Package: chenlab
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.1
+Authors@R: 
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+	AnnotationDbi,
+    data.table,
+	crayon,
+	DESeq2,
+    dplyr,
+	edgeR,
+	ggpubr,
+	ggview,
+	grDevices,
+	hms,
+	homologene,
+	limma,
+	magick,
+	magrittr,
+	parallel,
+	pbmcapply,
+	scater,
+	scCustomize,
+	SCP,
+	stringr,
+URL: https://github.com/cwbLab/chenlab
+
