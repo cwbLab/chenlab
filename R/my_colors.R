@@ -48,21 +48,8 @@ wb.group_colors <- function( number , continuous = F ){
 }
 
 
-
-###############################################################
-#' Previewing and saving ggplot2 objects
-#'
-#' @param plot ggplot2 object
-#' @param pre File name prefix
-#' @param sur File name suffix, default is '.png'
-#' @param file Full file name. If this parameter is provided, pre and sur will be ignored
-#' @param res Dots per inch (DPI) resolution
-#' @param h Height of the image (inch). The final image height is (h × res) pixels
-#' @param w Width of the image (inch). The final image width is (w × res) pixels
-#' @param model There are two preview modes: (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R. (2) F2 shows the image that has already been saved locally. By default, preview mode F1 is used.
-#'
-#' @export
-wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
+#########################################################################################
+my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
                      file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
   #
   if ( is.null(file)  ){
@@ -86,22 +73,51 @@ wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
     }
   )
   #
-  if ( model == 'F1'  ){
-    p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
-    print(p.view)
-  }
-  if ( model == 'F2'  ){
-    panel_size <- grDevices::dev.size( "px" )
-    raw.image <- magick::image_read(  filename  )
-    raw.image.scale <- magick::image_resize( raw.image,
-                                             paste0(  min( panel_size[1] / magick::image_info( raw.image )$width - 0.005,
-                                                           panel_size[2] / magick::image_info( raw.image )$height - 0.005 ) * 100, "%" )
-    )
-    temp <- capture.output(  suppressMessages( print(raw.image.scale )  ) )
+  if ( Sys.getenv("RSTUDIO") == "1" ){
+    #
+    if ( model == 'F1'  ){
+      p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
+      print(p.view)
+    }
+    if ( model == 'F2'  ){
+      panel_size <- grDevices::dev.size( "px" )
+      raw.image <- magick::image_read(  filename  )
+      raw.image.scale <- magick::image_resize( raw.image,
+                                               paste0(  min( panel_size[1] / magick::image_info( raw.image )$width - 0.005,
+                                                             panel_size[2] / magick::image_info( raw.image )$height - 0.005 ) * 100, "%" )
+      )
+      temp <- capture.output(  suppressMessages( print(raw.image.scale )  ) )
+    }
+    #
+  }else{
+    warning( "Image preview is only available in the RStudio GUI." )
   }
 
   #
-  message( wb.log_time_title(), filename, '\n'  )
+  message( wb.log_time_title(), "Saved to local: ",
+           wb.log_text_coloured( text =  filename , color = 'red' ), '.'  )
+  #
+}
+
+
+###############################################################
+#' Previewing and saving ggplot2 objects
+#'
+#' @param plot ggplot2 object
+#' @param pre File name prefix
+#' @param sur File name suffix, default is '.png'
+#' @param file Full file name. If this parameter is provided, pre and sur will be ignored
+#' @param res Dots per inch (DPI) resolution
+#' @param h Height of the image (inch). The final image height is (h × res) pixels
+#' @param w Width of the image (inch). The final image width is (w × res) pixels
+#' @param model There are two preview modes: (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R. (2) F2 shows the image that has already been saved locally. By default, preview mode F1 is used.
+#'
+#' @export
+wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
+                     file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
+  #
+  my.ggplot.op( plot = plot, pre = pre, sur = sur ,
+               file = file , res = res , h = h , w = w , model = model  )
   #
 }
 

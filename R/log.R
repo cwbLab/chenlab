@@ -2,13 +2,7 @@
 
 #' Time of log
 #'
-#' @param format Format of time:
-#'
-#' (1) bold and cyan;
-#'
-#' (2) bold;
-#'
-#' (3) regular.
+#' @param format Format of time. `1` (bold and cyan); `2` (bold); `3` (regular).
 #'
 #' @returns
 #' The returned value is designed to be used with the message function.
@@ -31,21 +25,29 @@ wb.log_time_title <- function(  format = 1  ){
 }
 
 
-#' Started/Completed texts of log
+#' Color of message
 #'
-#' @param format Options are s (Started) and c (Completed).
+#' @description
+#' Control the color of messages displayed via message().
+#'
+#' @param s.c Character flag indicating the log status. Use `"s"` for "Started" and `"c"` for "Completed". Ignored when `text` is not NULL.
+#' @param text Optional character string specifying the custom message to print.
+#' @param color Character string specifying the text color supported by the \pkg{crayon} package (e.g. `"green"`, `"red"`, `"yellow"`).
 #'
 #' @returns
-#' The returned value is designed to be used with the message function.
+#' A character string with ANSI color codes applied, suitable for printing via message().
 #'
 #' @export
-wb.log_time_start_end <- function(  format = 's'   ){
-  op = crayon::green( 'Started. ' )
-  if ( format == 's'  ){
-    op = op
-  }else if( format == 'c' ){
-    op = crayon::green( 'Completed. ' )
+wb.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green'   ){
+  #
+  if( !is.null(text) ){
+    mytext <- text
+  }else{
+    if( s.c == 's' ){ mytext = 'Started. '}else if(  s.c == 'c' ){ mytext = 'Completed. '   }
   }
+  #
+  cmd <- paste0( "crayon::" , color ,'("', mytext , '")'   )
+  op <- eval(parse(text = cmd))
   #
   return( op )
 }

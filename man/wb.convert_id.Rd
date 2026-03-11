@@ -7,7 +7,7 @@
 wb.convert_id(
   genes,
   ref,
-  ip.type,
+  ip.type = NULL,
   op.type,
   type = "first",
   homologous_species = NULL,
@@ -71,13 +71,13 @@ UCSCKG,
 
 UNIPROT.}
 
-\item{ip.type}{A vector of one or more gene types. The gene types must exist in the object specified by ref.}
+\item{ip.type}{A vector of one or more gene types. Gene types must exist in the object specified by ref. Defaults to NULL, which enables automatic detection.}
 
 \item{op.type}{Similar to the ip.type, it indicates the gene identifier type to be output.}
 
-\item{type}{Output mode. Options are 'first' or 'any'. When 'first', the result corresponds one-to-one with the input gene vector. When 'any', a single gene may produce multiple rows in the result.}
+\item{type}{Output mode. Options are 'first' or 'any'. When set to "first" and the length of op.type is 1, the result corresponds one-to-one with the input gene vector. When 'any', a single gene may produce multiple rows in the result.}
 
-\item{homologous_species}{A vector of species IDs for homologous genes. Available species IDs can be obtained via homologene::taxData. 9606(Homo sapiens); 10090(Mus musculus).}
+\item{homologous_species}{A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via homologene::taxData, e.g. 9606 (Homo sapiens), 10090 (Mus musculus).}
 
 \item{threads}{Number of cores used for parallel computation. By default, the maximum computing resources are used}
 }
@@ -85,7 +85,8 @@ UNIPROT.}
 This function encapsulates the mapIds and select functions from the AnnotationDbi package and the homologene function, providing a unified interface for gene identifier conversion.
 }
 \examples{
-gene_convert <- wb.convert_id( genes = c( 'ENSG00000001167', 'ENSG00000002079', 'ENO2', 'NKG2A'), 
-	ref = org.Hs.eg.db, 
-	ip.type = c('ENSEMBL', 'ALIAS'), op.type = 'SYMBOL' , homologous_species =  10090 )
+gene_convert <- wb.convert_id( genes = c( 'ENSG00000001167', 'ENSG00000002079', 'ENO2', 'NKG2A'),
+	ref = org.Hs.eg.db,
+	ip.type = c('ENSEMBL', 'ALIAS'), op.type = c('SYMBOL', 'ENTREZID'),
+	homologous_species =  10090 )
 }

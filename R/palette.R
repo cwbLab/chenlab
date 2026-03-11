@@ -34,7 +34,7 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
   }
 
   #
-  pdata <- wb.mc(1:length(split_groups), function(x) {
+  pdata <- wb.smc(1:length(split_groups), function(x) {
     g = paste0("group", x)
     v = lapply(split_groups[[x]], function(y) {
       detect <- tryCatch({
@@ -66,7 +66,7 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
 
   #
   pdata <- data.frame(rbindlist(pdata))
-  ps <- wb.mc(unique(pdata$group), function(x) {
+  ps <- wb.smc(unique(pdata$group), function(x) {
     sdata <- pdata[pdata$group == x, ]
     p <- ggplot(sdata, aes(x = height, y = name, fill = color)) +
       geom_tile(  ) + scale_fill_identity() +

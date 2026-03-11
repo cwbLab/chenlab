@@ -25,9 +25,11 @@ Imports:
 	magrittr,
 	parallel,
 	pbmcapply,
+	peakRAM,
+	progressr,
+	ps,
 	scater,
 	scCustomize,
-	SCP,
 	stringr,
 URL: https://github.com/cwbLab/chenlab
 

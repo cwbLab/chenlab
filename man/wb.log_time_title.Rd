@@ -7,13 +7,7 @@
 wb.log_time_title(format = 1)
 }
 \arguments{
-\item{format}{Format of time:
-
-(1) bold and cyan;
-
-(2) bold;
-
-(3) regular.}
+\item{format}{Format of time. \code{1} (bold and cyan); \code{2} (bold); \code{3} (regular).}
 }
 \value{
 The returned value is designed to be used with the message function.
