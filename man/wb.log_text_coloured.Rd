@@ -14,8 +14,8 @@ wb.log_text_coloured(s.c = "s", text = NULL, color = "green")
 \item{color}{Character string specifying the text color supported by the \pkg{crayon} package (e.g. \code{"green"}, \code{"red"}, \code{"yellow"}).}
 }
 \value{
-A character string with ANSI color codes applied, suitable for printing via message().
+A character string with ANSI color codes applied, suitable for printing via \code{message} function.
 }
 \description{
-Control the color of messages displayed via message().
+Control the color of messages displayed via \code{message} function.
 }

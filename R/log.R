@@ -5,7 +5,7 @@
 #' @param format Format of time. `1` (bold and cyan); `2` (bold); `3` (regular).
 #'
 #' @returns
-#' The returned value is designed to be used with the message function.
+#' The returned value is designed to be used with the `message` or `cat` function.
 #'
 #' @export
 wb.log_time_title <- function(  format = 1  ){
@@ -28,14 +28,14 @@ wb.log_time_title <- function(  format = 1  ){
 #' Color of message
 #'
 #' @description
-#' Control the color of messages displayed via message().
+#' Control the color of messages displayed via `message` function.
 #'
 #' @param s.c Character flag indicating the log status. Use `"s"` for "Started" and `"c"` for "Completed". Ignored when `text` is not NULL.
 #' @param text Optional character string specifying the custom message to print.
 #' @param color Character string specifying the text color supported by the \pkg{crayon} package (e.g. `"green"`, `"red"`, `"yellow"`).
 #'
 #' @returns
-#' A character string with ANSI color codes applied, suitable for printing via message().
+#' A character string with ANSI color codes applied, suitable for printing via `message` function.
 #'
 #' @export
 wb.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green'   ){

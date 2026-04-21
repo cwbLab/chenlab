@@ -1,6 +1,6 @@
 Package: chenlab
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.1
+Version: 26.04.21
 Authors@R: 
     person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
@@ -11,6 +11,7 @@ RoxygenNote: 7.3.2
 Imports:
 	AnnotationDbi,
     data.table,
+	clusterProfiler,
 	crayon,
 	DESeq2,
     dplyr,
@@ -18,6 +19,7 @@ Imports:
 	ggpubr,
 	ggview,
 	grDevices,
+	GSEABase,
 	hms,
 	homologene,
 	limma,
@@ -28,8 +30,10 @@ Imports:
 	peakRAM,
 	progressr,
 	ps,
+	qs,
 	scater,
 	scCustomize,
+	Seurat,
 	stringr,
 URL: https://github.com/cwbLab/chenlab
 

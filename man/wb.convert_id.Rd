@@ -79,7 +79,7 @@ UNIPROT.}
 
 \item{homologous_species}{A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via homologene::taxData, e.g. 9606 (Homo sapiens), 10090 (Mus musculus).}
 
-\item{threads}{Number of cores used for parallel computation. By default, the maximum computing resources are used}
+\item{threads}{Number of cores used for parallel computation. By default, the maximum computing resources are used.}
 }
 \description{
 This function encapsulates the mapIds and select functions from the AnnotationDbi package and the homologene function, providing a unified interface for gene identifier conversion.

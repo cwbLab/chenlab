@@ -57,13 +57,14 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     sample_idx <- sample(seq_along(X), sample_size)
 
     #
-    mean_used <- base::lapply(sample_idx,function(temp_idx){
-        temp <- abs(  peakRAM::peakRAM({ test_results <- base::lapply(X[temp_idx], FUN, ...) } )[['Peak_RAM_Used_MiB']]  )
-	    }
-    )
+    mean_used <- c()
+    for(  temp_idx  in  sample_idx  ){
+      temp <- max(  peakRAM::peakRAM({   test_results <- base::lapply(X[temp_idx], FUN, ...)   })[['Peak_RAM_Used_MiB']] , 0.1   )
+      mean_used <- c( mean_used , temp  )
+    }
 
     #minimum,0.5 MB
-    avg_mem_per_task_mb <- max( median( as.numeric( mean_used ) ), 0.4167) * 1.2
+    avg_mem_per_task_mb <- max( median( as.numeric( mean_used ) ), 0.4167 ) * 1.2
 
     #3
     get_total_mem_gb <- function(){
@@ -155,9 +156,6 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
   #
   return(final_results)
 }
-
-
-
 
 #' Multithreaded lapply
 #'

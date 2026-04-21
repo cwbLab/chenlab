@@ -10,7 +10,7 @@ wb.log_time_title(format = 1)
 \item{format}{Format of time. \code{1} (bold and cyan); \code{2} (bold); \code{3} (regular).}
 }
 \value{
-The returned value is designed to be used with the message function.
+The returned value is designed to be used with the \code{message} or \code{cat} function.
 }
 \description{
 Time of log

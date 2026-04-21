@@ -24,7 +24,7 @@ wb.rbindlist_n <- function(l, n = 10000, max_chunks = NULL, fill = FALSE, use.na
 
   #detect
   stopifnot(is.list(l))
-  if (is.null(threads)) { threads = parallel::detectCores() }
+  if (is.null(threads)) { threads = max(1, parallel::detectCores() - 1) }
 
   ######
   len <- length(l)

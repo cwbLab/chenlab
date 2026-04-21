@@ -11,6 +11,7 @@
 #' @returns
 #' A list of subsets.
 #'
+#'
 #' @export
 wb.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 ){
   n <- length(x)

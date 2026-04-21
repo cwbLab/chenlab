@@ -62,7 +62,7 @@
 #' @param op.type Similar to the ip.type, it indicates the gene identifier type to be output.
 #' @param type Output mode. Options are 'first' or 'any'. When set to "first" and the length of op.type is 1, the result corresponds one-to-one with the input gene vector. When 'any', a single gene may produce multiple rows in the result.
 #' @param homologous_species A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via homologene::taxData, e.g. 9606 (Homo sapiens), 10090 (Mus musculus).
-#' @param threads Number of cores used for parallel computation. By default, the maximum computing resources are used
+#' @param threads Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #'
 #' @examples
 #' gene_convert <- wb.convert_id( genes = c( 'ENSG00000001167', 'ENSG00000002079', 'ENO2', 'NKG2A'),
@@ -78,7 +78,7 @@ wb.convert_id <- function( genes,ref,ip.type = NULL,op.type,
   library(dplyr)
   library(AnnotationDbi)
   #
-  if( is.null( threads  ) ){  threads = parallel::detectCores()   }
+  if( is.null( threads  ) ){  threads = max(1, parallel::detectCores() - 1)   }
   #
   re.type = type
   if( type == 'any' ){ re.type = 'list'   }
@@ -247,69 +247,54 @@ wb.convert_id <- function( genes,ref,ip.type = NULL,op.type,
 
 #' Process duplicate row names in the input matrix
 #' @description
-#' After ID conversion, multiple rows may correspond to the same ID. This function can be used to process them and retain unique rows
+#' After ID conversion, multiple rows may correspond to the same ID. This function can be used to process them and retain unique rows.
 #'
 #'
-#' @param exp Expression matrix
-#' @param raw_row Original gene vector (usually the row names)
-#' @param convert_name onverted gene vector (corresponding to raw_row)
-#' @param type Method for retaining data. Options are 'max', 'min', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned
-#' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used
+#' @param exp Expression matrix.
+#' @param raw_row Original gene vector (usually the row names).
+#' @param convert_name onverted gene vector (corresponding to raw_row).
+#' @param type Method for retaining data. Options are 'max', 'min', 'sum', 'median', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned.
 #'
 #' @export
-
-wb.mtx_unique_row <- function( exp  , raw_row , convert_name , type = 'max' ,  mc.cores = NULL  ){
-  #
-  library(  pbmcapply  )
-  library( dplyr )
-  library( data.table )
-
+wb.mtx_unique_row <- function( exp, raw_row, convert_name, type = 'max' ){
+  library(data.table)
 
   #
-  if( is.null( mc.cores  ) ){  mc.cores = parallel::detectCores()  }
+  if(length(raw_row) != nrow(exp) | length(convert_name) != nrow(exp)){
+    stop("Length of raw_row and convert_name must equal nrow(exp)")
+  }
 
-  exp$Description <- convert_name
   #
-  gene_counts <- table( exp$Description  ) %>% as.data.frame()
-  gene_counts <- gene_counts[ order(gene_counts$Freq,decreasing = T)  ,]
+  dt <- as.data.table(exp)
+  dt[, target_id := convert_name]
+
+  #
+  method <- match.arg(type, c("max", "min", "sum", "mean", "median"))
+  func <- switch(method,
+                 "max"    = function(x) max(x, na.rm = TRUE),
+                 "min"    = function(x) min(x, na.rm = TRUE),
+                 "sum"    = function(x) sum(x, na.rm = TRUE),
+                 "mean"   = function(x) mean(x, na.rm = TRUE),
+                 "median" = function(x) stats::median(x, na.rm = TRUE)
+  )
 
 
-  #sdata1
-  samples <- colnames(exp)
-  sdata1 <- exp[ exp$Description %in% gene_counts$Var1[gene_counts$Freq == 1]  , ]
+  #
+  message(paste0("Merging duplicate rows using ", method, " method..."))
+  dt_agg <- dt[, lapply(.SD, func), by = target_id]
 
-  #sdata2
-  dup_genes <-  gene_counts$Var1[gene_counts$Freq != 1]
-  sdata2 <- pbmclapply(dup_genes, function(x){
-    sd <- exp[ exp$Description == x ,   ]
-    sd2 <- sd[,-ncol(sd)]
-    sd2 <- sd2 %>% apply(1,as.numeric) %>% as.data.frame()%>% t() %>% as.data.frame()
-    if( type == 'max' ){
-      uniq_data <-  sd[ which.max(rowSums(sd2)) , ]
-    }else if( type == 'min' ){
-      uniq_data <-  sd[ which.min(rowSums(sd2)) , ]
-    }else if( type == 'mean'  ){
-      uniq_data <- data.table(matrix( c( colMeans( sd2 ) , x  ) , nrow = 1   ))
-    }
+  #
+  dt_agg <- dt_agg[!is.na(target_id) & target_id != ""]
 
-    return( data.table(uniq_data)  )
-  } ,mc.cores = mc.cores ) %>% rbindlist() %>% as.data.frame()
-  colnames(sdata2) <- samples
+  #
+  res_mat <- as.data.frame( as.matrix(dt_agg[, -1, with = FALSE]) )
+  rownames(res_mat) <- dt_agg$target_id
 
-  #merge
-  final_data <- rbind( sdata1 , sdata2   ) %>% as.data.frame()
-  rownames(final_data) <- final_data$Description
-  final_data <- final_data[ ,  -ncol( final_data ) ] %>% as.data.frame()
-
-  #numeric
-  genes <- rownames(final_data)
-  numeric_data <- apply(  final_data , 2 , as.numeric ) %>% as.data.frame()
-  rownames(numeric_data) <- genes
-
-  #return
-  return(   numeric_data   )
-
+  return(res_mat)
 }
+
+
+
 
 
 

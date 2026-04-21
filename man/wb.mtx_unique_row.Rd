@@ -4,19 +4,17 @@
 \alias{wb.mtx_unique_row}
 \title{Process duplicate row names in the input matrix}
 \usage{
-wb.mtx_unique_row(exp, raw_row, convert_name, type = "max", mc.cores = NULL)
+wb.mtx_unique_row(exp, raw_row, convert_name, type = "max")
 }
 \arguments{
-\item{exp}{Expression matrix}
+\item{exp}{Expression matrix.}
 
-\item{raw_row}{Original gene vector (usually the row names)}
+\item{raw_row}{Original gene vector (usually the row names).}
 
-\item{convert_name}{onverted gene vector (corresponding to raw_row)}
+\item{convert_name}{onverted gene vector (corresponding to raw_row).}
 
-\item{type}{Method for retaining data. Options are 'max', 'min', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned}
-
-\item{mc.cores}{Number of cores used for parallel computation. By default, the maximum computing resources are used}
+\item{type}{Method for retaining data. Options are 'max', 'min', 'sum', 'median', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned.}
 }
 \description{
-After ID conversion, multiple rows may correspond to the same ID. This function can be used to process them and retain unique rows
+After ID conversion, multiple rows may correspond to the same ID. This function can be used to process them and retain unique rows.
 }
