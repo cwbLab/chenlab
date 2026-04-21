@@ -18,5 +18,5 @@ wb.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T)
 \item{time}{Display execution time. Default is TRUE.}
 }
 \description{
-In a special use case of wb.smc, memory usage is not automatically detected, which may significantly improve computational performance.
+A special use case of \code{wb.smc}, where memory usage is not limited. By default, all available threads are used for computation.
 }

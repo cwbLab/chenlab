@@ -10,7 +10,7 @@ wb.smc(
   ...,
   mc.cores = NULL,
   mem.ratio.max = 0.8,
-  mem.max = 16,
+  mem.max = NULL,
   pb = T,
   time = T
 )
@@ -26,7 +26,7 @@ If an integer is provided, the program will force execution with the specified n
 
 \item{mem.ratio.max}{Maximum proportion of available memory allowed when automatically determining the number of cores.}
 
-\item{mem.max}{Maximum memory allowed (GB) when the total system memory cannot be determined.}
+\item{mem.max}{Maximum amount of memory (in GB) allowed when automatically determining the number of cores. Defaults to NULL, which will automatically detect the maximum available system memory.}
 
 \item{pb}{Show progress bar. Default is TRUE.}
 

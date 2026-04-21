@@ -11,7 +11,7 @@
 #'
 #' If an integer is provided, the program will force execution with the specified number of threads, ignoring memory protection.
 #' @param mem.ratio.max Maximum proportion of available memory allowed when automatically determining the number of cores.
-#' @param mem.max Maximum memory allowed (GB) when the total system memory cannot be determined.
+#' @param mem.max Maximum amount of memory (in GB) allowed when automatically determining the number of cores. Defaults to NULL, which will automatically detect the maximum available system memory.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
 #'
@@ -20,7 +20,7 @@
 #'
 #' @export
 #'
-wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 16 , pb = T ,time = T){
+wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = NULL , pb = T , time = T){
   start_time <- Sys.time()
 
   #1
@@ -54,6 +54,7 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 
     #2
     sample_size <- min(5, length(X))
+    set.seed(100)
     sample_idx <- sample(seq_along(X), sample_size)
 
     #
@@ -75,7 +76,25 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     }
 
     total_mem_gb <- get_total_mem_gb()
-    limit_mem_gb <- if(!is.na(total_mem_gb)) total_mem_gb * mem.ratio.max else mem.max
+    if( !is.na(total_mem_gb)  ){
+      total_mem_gb <- total_mem_gb
+      if( !is.null( mem.max  ) ){
+        total_mem_gb <- as.numeric(mem.max)
+      }
+    }else{
+      if( is.null( mem.max  ) ){
+        total_mem_gb <- avg_mem_per_task_mb / 1024
+      }else{
+        total_mem_gb <- as.numeric(mem.max)
+      }
+      #
+      message( 'Unable to automatically determine available system memory. Users can explicitly set the memory limit via the mem.max parameter. Memory allowed: ',
+               wb.log_text_coloured( text = round( total_mem_gb , digits = 3  ) , color = 'red' ),
+               ' GB.'
+              )
+    }
+
+    limit_mem_gb <- total_mem_gb * mem.ratio.max
 
     #4
     max_safe_cores <- floor((limit_mem_gb / (avg_mem_per_task_mb / 1024)) * 0.9)
@@ -157,10 +176,11 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
   return(final_results)
 }
 
+
 #' Multithreaded lapply
 #'
 #' @description
-#' In a special use case of wb.smc, memory usage is not automatically detected, which may significantly improve computational performance.
+#' A special use case of `wb.smc`, where memory usage is not limited. By default, all available threads are used for computation.
 #'
 #' @param X Same as the X parameter in mclapply.
 #' @param FUN Same as the FUN parameter in mclapply.
@@ -172,7 +192,7 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 wb.mc <- function( X, FUN, ..., mc.cores = NULL, pb = T ,time = T  ){
   if( is.null( mc.cores  ) ){  mc.cores = max( parallel::detectCores() - 1 , 1 ) }
   #
-  res <- wb.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = 16 , pb = pb ,time = time )
+  res <- wb.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = NULL , pb = pb ,time = time )
   #
   return( res )
 }
