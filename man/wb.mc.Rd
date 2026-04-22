@@ -7,9 +7,11 @@
 wb.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T)
 }
 \arguments{
-\item{X}{Same as the X parameter in mclapply.}
+\item{X}{Same as the X parameter in \code{wb.smc}.}
 
-\item{FUN}{Same as the FUN parameter in mclapply.}
+\item{FUN}{Same as the FUN parameter in \code{wb.smc}.}
+
+\item{...}{Same as \code{wb.smc}.}
 
 \item{mc.cores}{Number of cores used for parallel computation. By default, the maximum computing resources are used.}
 

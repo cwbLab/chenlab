@@ -2,7 +2,7 @@
 #' wb.qsave
 #'
 #' @description
-#' Wraps the `qs::qsave` function to enable fast serialization of either the entire R environment or a set of specified objects to a local file, with significantly improved performance compared to the base R functions `save`, `save.image` and `saveRDS`.
+#' Wraps the `qs2::qs_save` function to enable fast serialization of either the entire R environment or a set of specified objects to a local file, with significantly improved performance compared to the base R functions `save`, `save.image` and `saveRDS`.
 #'
 #' @param filename The file name/path.
 #'
@@ -10,12 +10,9 @@
 #'
 #' @param ... By default, all objects in the R environment are saved. Alternatively, users can specify multiple objects, in which case only the selected objects will be saved to the local file.
 #' @param envir The environment in which the objects are located.
-#' @param preset Consistent with the `qs::qsave`.
-#' @param algorithm Consistent with the `qs::qsave`.
-#' @param compress_level Consistent with the `qs::qsave`.
-#' @param shuffle_control Consistent with the `qs::qsave`.
-#' @param check_hash Consistent with the `qs::qsave`.
-#' @param nthreads Consistent with the `qs::qsave`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
+#' @param compress_level Consistent with the `qs2::qs_save`.
+#' @param shuffle Consistent with the `qs2::qs_save`.
+#' @param nthreads Consistent with the `qs2::qs_save`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
 #'
 #' @returns
 #' NULL.
@@ -26,27 +23,27 @@
 #' x3 <- data.frame(int = sample(1e5, replace=TRUE), num = rnorm(1e5) )
 #'
 #' #1.entire R environment
-#' wb.qsave( 'entire_R_environment.qimage' )
-#' #wb.qread( 'entire_R_environment.qimage' )
+#' wb.qsave( 'entire_R_environment.qdata' )
+#' #wb.qread( 'entire_R_environment.qdata' )
 #'
 #' #2.x1 and x2
-#' wb.qsave( 'x1_x2.qimage' , x1, x2 )
-#' #wb.qread( 'x1_x2.qimage' )
+#' wb.qsave( 'x1_x2.qdata' , x1, x2 )
+#' #wb.qread( 'x1_x2.qdata' )
 #'
 #' #3.x1
 #' wb.qsave(  'x1.qrds' , x1 )
 #' #wb.qread( 'x1.qrds' , return = F )
-#' #wb.qread( 'x1.qrds' , return = T )
+#' #read_x1 <- wb.qread( 'x1.qrds' , return = T )
 #'
 #' @export
 #'
 #'
-wb.qsave <- function(filename, ... , envir = .GlobalEnv, preset = "fast" ,
-                     algorithm = "lz4", compress_level = 100,
-                     shuffle_control = 0, check_hash = FALSE, nthreads = 1
+wb.qsave <- function(filename, ... , envir = .GlobalEnv,
+                     compress_level = qs2::qopt( "compress_level" ),
+                     shuffle = qs2::qopt("shuffle"), nthreads = 1
 ){
   #
-  suppressMessages(library(qs))
+  suppressMessages(library(qs2))
   #
   threads <- nthreads
 
@@ -59,9 +56,9 @@ wb.qsave <- function(filename, ... , envir = .GlobalEnv, preset = "fast" ,
     obj_names <- ls(envir = envir)
     obj_list  <- mget(obj_names, envir = envir)
 
-    qs::qsave(x = obj_list, file = filename, preset = preset ,
-              algorithm = algorithm , compress_level = compress_level ,
-              shuffle_control = shuffle_control , check_hash = check_hash ,
+    qs2::qs_save(object = obj_list, file = filename,
+              compress_level = compress_level ,
+              shuffle = shuffle ,
               nthreads = threads )
 
     message(wb.log_time_title() , "Saved entire environment: ", length(obj_names), " objects → ", filename)
@@ -71,10 +68,10 @@ wb.qsave <- function(filename, ... , envir = .GlobalEnv, preset = "fast" ,
     obj_names <- sapply(dots, deparse)
     obj_list  <- mget(obj_names, envir = envir)
 
-    qs::qsave(x = obj_list, file = filename, preset = preset ,
-              algorithm = algorithm , compress_level = compress_level ,
-              shuffle_control = shuffle_control , check_hash = check_hash ,
-              nthreads = threads )
+    qs2::qs_save(object = obj_list, file = filename,
+                 compress_level = compress_level ,
+                 shuffle = shuffle ,
+                 nthreads = threads )
 
     message(wb.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ", filename)
   }
@@ -87,14 +84,14 @@ wb.qsave <- function(filename, ... , envir = .GlobalEnv, preset = "fast" ,
 #' wb.qread
 #'
 #' @description
-#' A wrapper around `qs::qread` for loading objects saved with `wb.qsave` into the R environment.
+#' A wrapper around `qs2::qs_read` for loading objects saved with `wb.qsave` into the R environment.
 #'
 #' @param filename The file name/path.
 #' @param envir The target environment into which the variables will be loaded.
 #' @param return Return the saved objects as variables instead of loading them into the target environment.
 #'
 #' If a single object is saved, it is returned directly; if multiple objects are saved, a list containing these objects is returned.
-#' @param nthreads Consistent with `qs::qread`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
+#' @param nthreads Consistent with `qs2::qs_read`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
 #'
 #' @returns
 #' NULL.
@@ -106,7 +103,7 @@ wb.qread <- function( filename , envir = .GlobalEnv , return = F , nthreads = 1 
   threads <- nthreads
 
   #
-  wb_qload_obj_list <- qs::qread( file = filename ,  nthreads =  threads )
+  wb_qload_obj_list <- qs2::qs_read( file = filename,  nthreads =  threads)
   message(wb.log_time_title() ,"Loaded ", length(wb_qload_obj_list), " objects from ", filename)
 
   #

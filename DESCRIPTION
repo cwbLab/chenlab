@@ -30,7 +30,7 @@ Imports:
 	peakRAM,
 	progressr,
 	ps,
-	qs,
+	qs2,
 	scater,
 	scCustomize,
 	Seurat,

@@ -16,9 +16,11 @@ wb.smc(
 )
 }
 \arguments{
-\item{X}{Same as the X parameter in mclapply.}
+\item{X}{Same as the X parameter in \code{parallel::mclapply}.}
 
-\item{FUN}{Same as the FUN parameter in mclapply.}
+\item{FUN}{Same as the FUN parameter in \code{parallel::mclapply}.}
+
+\item{...}{Same as \code{parallel::mclapply}.}
 
 \item{mc.cores}{Maximum number of cores used for parallel computation. By default, the number of cores is automatically determined based on memory usage, ensuring that memory does not overflow while fully utilizing all available system resources.
 
@@ -33,7 +35,7 @@ If an integer is provided, the program will force execution with the specified n
 \item{time}{Display execution time. Default is TRUE.}
 }
 \value{
-Returns results consistent with parallel::mclapply.
+Returns results consistent with \code{parallel::mclapply}.
 }
 \description{
 A smart mclapply function that automatically determines the number of cores for parallel computation, maximizing the use of system resources while ensuring memory does not overflow.

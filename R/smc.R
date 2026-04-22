@@ -5,8 +5,9 @@
 #'
 #' Its core logic is to split the input vector into chunks for execution, thereby preventing memory overflow.
 #'
-#' @param X Same as the X parameter in mclapply.
-#' @param FUN Same as the FUN parameter in mclapply.
+#' @param X Same as the X parameter in `parallel::mclapply`.
+#' @param FUN Same as the FUN parameter in `parallel::mclapply`.
+#' @param ... Same as `parallel::mclapply`.
 #' @param mc.cores Maximum number of cores used for parallel computation. By default, the number of cores is automatically determined based on memory usage, ensuring that memory does not overflow while fully utilizing all available system resources.
 #'
 #' If an integer is provided, the program will force execution with the specified number of threads, ignoring memory protection.
@@ -16,7 +17,7 @@
 #' @param time Display execution time. Default is TRUE.
 #'
 #' @return
-#' Returns results consistent with parallel::mclapply.
+#' Returns results consistent with `parallel::mclapply`.
 #'
 #' @export
 #'
@@ -182,8 +183,9 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 #' @description
 #' A special use case of `wb.smc`, where memory usage is not limited. By default, all available threads are used for computation.
 #'
-#' @param X Same as the X parameter in mclapply.
-#' @param FUN Same as the FUN parameter in mclapply.
+#' @param X Same as the X parameter in `wb.smc`.
+#' @param FUN Same as the FUN parameter in `wb.smc`.
+#' @param ... Same as `wb.smc`.
 #' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
