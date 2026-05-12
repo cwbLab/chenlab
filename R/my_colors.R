@@ -51,6 +51,7 @@ wb.group_colors <- function( number , continuous = F ){
 #########################################################################################
 my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
                      file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
+
   #
   if ( is.null(file)  ){
     filename = paste0( pre , sur  )
@@ -76,6 +77,10 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   if ( Sys.getenv("RSTUDIO") == "1" ){
     #
     if ( model == 'F1'  ){
+      rlang::check_installed("ggview",
+                             reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: devtools::install_github('idmn/ggview')."
+      )
+
       p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
       print(p.view)
     }

@@ -10,14 +10,13 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports:
 	AnnotationDbi,
-    data.table,
 	clusterProfiler,
 	crayon,
+	data.table,
 	DESeq2,
     dplyr,
 	edgeR,
 	ggpubr,
-	ggview,
 	grDevices,
 	GSEABase,
 	hms,
@@ -32,8 +31,10 @@ Imports:
 	ps,
 	qs2,
 	scater,
+	stringr,
+Suggests:
+	ggview,
 	scCustomize,
 	Seurat,
-	stringr,
 URL: https://github.com/cwbLab/chenlab
 

@@ -12,6 +12,11 @@
 #' @export
 wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
                                  name.size = 10){
+
+  rlang::check_installed("SCP",
+                         reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: devtools::install_github('zhanghao-njmu/SCP')."
+                         )
+  #
   library(data.table)
   library(ggplot2)
   library(SCP)
@@ -107,6 +112,10 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
 #'
 #' @export
 wb.palette_get <- function( palette_names = NULL , ncolor = 5 , colors = NULL , cat = F   ){
+  rlang::check_installed("SCP",
+                         reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: devtools::install_github('zhanghao-njmu/SCP')."
+  )
+
   #
   library( crayon  )
   #

@@ -44,6 +44,7 @@ wb.qsave <- function(filename, ... , envir = .GlobalEnv,
 ){
   #
   suppressMessages(library(qs2))
+  message( wb.log_time_title() , wb.log_text_coloured( s.c = 's' ) )
   #
   threads <- nthreads
 
@@ -99,6 +100,8 @@ wb.qsave <- function(filename, ... , envir = .GlobalEnv,
 #' @export
 #'
 wb.qread <- function( filename , envir = .GlobalEnv , return = F , nthreads = 1  ){
+  #
+  message( wb.log_time_title() , wb.log_text_coloured( s.c = 's' ) )
   #
   threads <- nthreads
 

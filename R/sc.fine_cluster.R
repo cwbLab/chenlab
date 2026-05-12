@@ -32,6 +32,9 @@
 #'
 #'
 wb.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 ){
+  rlang::check_installed("Seurat",
+                         reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: install.packages('Seurat')."
+  )
   #
   library(Seurat)
   library(dplyr)
