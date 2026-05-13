@@ -6,9 +6,7 @@
 #' @export
 wb.seurat_5_3 <-function( seurat, v = 'V3'  ){
   #
-  rlang::check_installed("scCustomize",
-                         reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: install.packages('scCustomize')."
-  )
+  wb.packageCheck( "Seurat" , method = "I"  )
 
   #
   new_seurat <- scCustomize::Convert_Assay( seurat_object = seurat , convert_to = v  )

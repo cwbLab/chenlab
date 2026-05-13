@@ -77,14 +77,14 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   if ( Sys.getenv("RSTUDIO") == "1" ){
     #
     if ( model == 'F1'  ){
-      rlang::check_installed("ggview",
-                             reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: devtools::install_github('idmn/ggview')."
-      )
+      wb.packageCheck( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
 
       p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
       print(p.view)
     }
     if ( model == 'F2'  ){
+      wb.packageCheck( "magick" ,method = "I"   )
+
       panel_size <- grDevices::dev.size( "px" )
       raw.image <- magick::image_read(  filename  )
       raw.image.scale <- magick::image_resize( raw.image,

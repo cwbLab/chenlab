@@ -73,10 +73,14 @@
 #'
 wb.convert_id <- function( genes,ref,ip.type = NULL,op.type,
                            type = 'first', homologous_species = NULL,threads = NULL ){
+
+  #
+  wb.packageCheck(  "AnnotationDbi",method = "B" )
+  wb.packageCheck(  "homologene",method = "B" )
+  #
   library(parallel)
   library(data.table)
   library(dplyr)
-  library(AnnotationDbi)
   #
   if( is.null( threads  ) ){  threads = max(1, parallel::detectCores() - 1)   }
   #

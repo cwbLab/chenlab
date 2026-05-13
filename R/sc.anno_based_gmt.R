@@ -28,9 +28,8 @@
 #'
 wb.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
   #
-  rlang::check_installed("Seurat",
-                         reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: install.packages('Seurat')."
-  )
+  wb.packageCheck( "Seurat" , method = "I"  )
+
   ###load required packages
   library(stringr);library(dplyr);library(GSEABase)
   library(Seurat);library(data.table)

@@ -20,9 +20,9 @@
 #' @export
 #'
 wb.sc.markers_decision <- function( object , gmt , top = 30 ){
-  rlang::check_installed("Seurat",
-                         reason = "but not installed.\n⚠️⚠️⚠️️ Recommended way to install: install.packages('Seurat')."
-  )
+
+  wb.packageCheck( "Seurat" , method = "I"  )
+
   #
   library(dplyr);library(clusterProfiler)
   library(Seurat);library(data.table)
