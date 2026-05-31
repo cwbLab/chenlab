@@ -72,6 +72,3 @@ w.packageCheck <- function( package.name, method = 'I', interactive.install = TR
   #
 }
 
-
-
-
