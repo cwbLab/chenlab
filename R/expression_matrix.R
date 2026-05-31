@@ -65,18 +65,18 @@
 #' @param threads Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #'
 #' @examples
-#' gene_convert <- wb.convert_id( genes = c( 'ENSG00000001167', 'ENSG00000002079', 'ENO2', 'NKG2A'),
+#' gene_convert <- w.convert_id( genes = c( 'ENSG00000001167', 'ENSG00000002079', 'ENO2', 'NKG2A'),
 #'		ref = org.Hs.eg.db,
 #'		ip.type = c('ENSEMBL', 'ALIAS'), op.type = c('SYMBOL', 'ENTREZID'),
 #'		homologous_species =  10090 )
 #' @export
 #'
-wb.convert_id <- function( genes,ref,ip.type = NULL,op.type,
+w.convert_id <- function( genes,ref,ip.type = NULL,op.type,
                            type = 'first', homologous_species = NULL,threads = NULL ){
 
   #
-  wb.packageCheck(  "AnnotationDbi",method = "B" )
-  wb.packageCheck(  "homologene",method = "B" )
+  w.packageCheck(  "AnnotationDbi",method = "B" )
+  w.packageCheck(  "homologene",method = "B" )
   #
   library(parallel)
   library(data.table)
@@ -260,7 +260,7 @@ wb.convert_id <- function( genes,ref,ip.type = NULL,op.type,
 #' @param type Method for retaining data. Options are 'max', 'min', 'sum', 'median', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned.
 #'
 #' @export
-wb.mtx_unique_row <- function( exp, raw_row, convert_name, type = 'max' ){
+w.mtx_unique_row <- function( exp, raw_row, convert_name, type = 'max' ){
   library(data.table)
 
   #

@@ -1,6 +1,6 @@
 Package: chenlab
 Title: ChenLab R Tools
-Version: 26.05.13
+Version: 26.05.31
 Authors@R: 
     person("Wenbo", "Chen", , "cwblab@outlook.com", role = c("aut", "cre"))
 Description: A collection of utility functions for bioinformatics analysis.
@@ -35,6 +35,6 @@ Suggests:
 	homologene,
 	magick,
 	scCustomize,
+	SCP,
 	Seurat,
 URL: https://github.com/cwbLab/chenlab
-

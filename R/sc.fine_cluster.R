@@ -21,7 +21,7 @@
 #' p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 #'
 #' # rename
-#' new_name <- wb.sc.fine_cluster( seurat.obj )
+#' new_name <- w.sc.fine_cluster( seurat.obj )
 #' new.cluster <- new_name$new_cluster
 #' names(new.cluster) <- new_name$raw_cluster
 #' seurat.obj <- RenameIdents( seurat.obj, new.cluster )
@@ -31,8 +31,8 @@
 #'
 #'
 #'
-wb.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 ){
-  wb.packageCheck( "Seurat" , method = "I"  )
+w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 ){
+  w.packageCheck( "Seurat" , method = "I"  )
 
   #
   library(Seurat)
@@ -95,7 +95,7 @@ wb.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
   cell_counts$Var1 <- as.character( cell_counts$Var1 )
   cell_counts <- cell_counts[  order( cell_counts$Freq , decreasing = T ) , ]
 
-  trans_res <- data.frame( raw = cell_counts$Var1[1] , trans = "C1"   )
+  trans_res <- data.frame( raw = cell_counts$Var1[1] , trans = 1  )
   cluster_number <- 1
   target_cell <- trans_res$raw
 
@@ -108,7 +108,7 @@ wb.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
     #
     for( x in neighbors ){
       cluster_number <- cluster_number + 1
-      trans_res <- rbind( trans_res , data.frame( raw = x , trans = paste0( "C" , cluster_number  )  ) )
+      trans_res <- rbind( trans_res , data.frame( raw = x , trans = cluster_number  ) )
     }
   }
   #

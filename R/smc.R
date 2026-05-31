@@ -21,7 +21,7 @@
 #'
 #' @export
 #'
-wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = NULL , pb = T , time = T){
+w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = NULL , pb = T , time = T){
   start_time <- Sys.time()
 
   #1
@@ -31,7 +31,7 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 
   #windows
   if (is_windows){
-    if( time ){ message( wb.log_time_title() , wb.log_text_coloured( s.c = 's' ) , 'Tasks: ' , length(X) ,'.'  )  }
+    if( time ){ message( w.log_time_title() , w.log_text_coloured( s.c = 's' ) , 'Tasks: ' , length(X) ,'.'  )  }
     #
     if(pb){
       res <- pbmcapply::pbmclapply(X, FUN, ... ,mc.cores = 1 )
@@ -40,9 +40,9 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     }
     #
     end_time <- Sys.time()
-    if( time ){ message( wb.log_time_title() ,
-                         wb.log_text_coloured( s.c = 'c' ) ,
-                         wb.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
+    if( time ){ message( w.log_time_title() ,
+                         w.log_text_coloured( s.c = 'c' ) ,
+                         w.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
     }
     return(res)
   }
@@ -90,7 +90,7 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
       }
       #
       message( 'Unable to automatically determine available system memory. Users can explicitly set the memory limit via the mem.max parameter. Memory allowed: ',
-               wb.log_text_coloured( text = round( total_mem_gb , digits = 3  ) , color = 'red' ),
+               w.log_text_coloured( text = round( total_mem_gb , digits = 3  ) , color = 'red' ),
                ' GB.'
               )
     }
@@ -116,11 +116,11 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 
     current_cores <- min( target_threads, max_safe_cores  )
     if( time ){ message(
-      wb.log_time_title(),
-      wb.log_text_coloured( s.c = 's' ),
-      "Tasks total: ", wb.log_text_coloured( text = length(X) ,color = 'red' ),
-      "; Mem per task: ", wb.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), wb.log_text_coloured( text = ' MB' , color = 'red' ),
-      "; Threads used: ", wb.log_text_coloured( text = current_cores , color = 'red' ),'.'
+      w.log_time_title(),
+      w.log_text_coloured( s.c = 's' ),
+      "Tasks total: ", w.log_text_coloured( text = length(X) ,color = 'red' ),
+      "; Mem per task: ", w.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), w.log_text_coloured( text = ' MB' , color = 'red' ),
+      "; Threads used: ", w.log_text_coloured( text = current_cores , color = 'red' ),'.'
     )}
     #
     progressr::with_progress({
@@ -153,10 +153,10 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
   }else{
     #
     if( time ){ message(
-      wb.log_time_title(),
-      wb.log_text_coloured( s.c = 's' ),
-      "Tasks total: ", wb.log_text_coloured( text = length(X) ,color = 'red' ),
-      "; Threads used: ", wb.log_text_coloured( text =  as.integer(threads), color = 'red' ),'.'
+      w.log_time_title(),
+      w.log_text_coloured( s.c = 's' ),
+      "Tasks total: ", w.log_text_coloured( text = length(X) ,color = 'red' ),
+      "; Threads used: ", w.log_text_coloured( text =  as.integer(threads), color = 'red' ),'.'
     ) }
     #
     if(pb){
@@ -169,9 +169,9 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 
   #
   end_time <- Sys.time()
-  if( time ){ message( wb.log_time_title() ,
-                       wb.log_text_coloured( s.c = 'c' ) ,
-                       wb.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
+  if( time ){ message( w.log_time_title() ,
+                       w.log_text_coloured( s.c = 'c' ) ,
+                       w.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
   }
   #
   return(final_results)
@@ -181,20 +181,20 @@ wb.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 #' Multithreaded lapply
 #'
 #' @description
-#' A special use case of `wb.smc`, where memory usage is not limited. By default, all available threads are used for computation.
+#' A special use case of `w.smc`, where memory usage is not limited. By default, all available threads are used for computation.
 #'
-#' @param X Same as the X parameter in `wb.smc`.
-#' @param FUN Same as the FUN parameter in `wb.smc`.
-#' @param ... Same as `wb.smc`.
+#' @param X Same as the X parameter in `w.smc`.
+#' @param FUN Same as the FUN parameter in `w.smc`.
+#' @param ... Same as `w.smc`.
 #' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
 #'
 #' @export
-wb.mc <- function( X, FUN, ..., mc.cores = NULL, pb = T ,time = T  ){
+w.mc <- function( X, FUN, ..., mc.cores = NULL, pb = T ,time = T  ){
   if( is.null( mc.cores  ) ){  mc.cores = max( parallel::detectCores() - 1 , 1 ) }
   #
-  res <- wb.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = NULL , pb = pb ,time = time )
+  res <- w.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = NULL , pb = pb ,time = time )
   #
   return( res )
 }

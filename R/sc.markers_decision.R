@@ -19,9 +19,9 @@
 #'
 #' @export
 #'
-wb.sc.markers_decision <- function( object , gmt , top = 30 ){
+w.sc.markers_decision <- function( object , gmt , top = 30 ){
 
-  wb.packageCheck( "Seurat" , method = "I"  )
+  w.packageCheck( "Seurat" , method = "I"  )
 
   #
   library(dplyr);library(clusterProfiler)
@@ -45,7 +45,7 @@ wb.sc.markers_decision <- function( object , gmt , top = 30 ){
     marker_res$cluster <- as.character( marker_res$cluster )
 
     #1
-    marker_res$marker_y <- wb.smc( 1:nrow( marker_res  ), function(x){
+    marker_res$marker_y <- w.smc( 1:nrow( marker_res  ), function(x){
       c = marker_res$cluster[x] ; g = marker_res$gene[x]
       #
       my = 'N'

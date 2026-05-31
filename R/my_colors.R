@@ -8,7 +8,7 @@
 #' @param continuous Whether to return a continuous color scale
 
 #' @export
-wb.group_colors <- function( number , continuous = F ){
+w.group_colors <- function( number , continuous = F ){
   #
   group_color <- c(
     "#FF3B30", "#007AFF", "#CC00CC", "#00CCFF", "#FDB9A0",
@@ -77,13 +77,13 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   if ( Sys.getenv("RSTUDIO") == "1" ){
     #
     if ( model == 'F1'  ){
-      wb.packageCheck( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
+      w.packageCheck( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
 
       p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
       print(p.view)
     }
     if ( model == 'F2'  ){
-      wb.packageCheck( "magick" ,method = "I"   )
+      w.packageCheck( "magick" ,method = "I"   )
 
       panel_size <- grDevices::dev.size( "px" )
       raw.image <- magick::image_read(  filename  )
@@ -99,8 +99,8 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   }
 
   #
-  message( wb.log_time_title(), "Saved to local: ",
-           wb.log_text_coloured( text =  filename , color = 'red' ), '.'  )
+  message( w.log_time_title(), "Saved to local: ",
+           w.log_text_coloured( text =  filename , color = 'red' ), '.'  )
   #
 }
 
@@ -108,17 +108,27 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
 ###############################################################
 #' Previewing and saving ggplot2 objects
 #'
-#' @param plot ggplot2 object
-#' @param pre File name prefix
-#' @param sur File name suffix, default is '.png'
-#' @param file Full file name. If this parameter is provided, pre and sur will be ignored
-#' @param res Dots per inch (DPI) resolution
-#' @param h Height of the image (inch). The final image height is (h × res) pixels
-#' @param w Width of the image (inch). The final image width is (w × res) pixels
-#' @param model There are two preview modes: (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R. (2) F2 shows the image that has already been saved locally. By default, preview mode F1 is used.
+#' @description
+#' This function wraps and extends `ggpubr::ggexport` to facilitate saving ggplot objects to local files. In addition, it provides a preview window for immediate visualization of exported images.
+#'
+#' @param plot ggplot2 object.
+#' @param pre File name prefix.
+#' @param sur File name suffix, default is '.png'. Supported image formats are identical to those of `ggpubr::ggexport`.
+#' @param file Full file name. If this parameter is provided, pre and sur will be ignored.
+#' @param res Dots per inch (DPI) resolution.
+#' @param h Height of the image (inch). For raster plots, the final image height is (h × res) pixels. For vector graphics, the final height is h inches.
+#' @param w Width of the image (inch). For raster plots, the final image width is (w × res) pixels. For vector graphics, the final width is w inches.
+#' @param model There are two preview modes:
+#'
+#' (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
+#'
+#' (2) F2 shows the image that has already been saved locally.
+#'
+#' By default, preview mode F1 is used.
 #'
 #' @export
-wb.ggop <- function( plot, pre = NULL, sur = '.png' ,
+#'
+w.ggop <- function( plot, pre = NULL, sur = '.png' ,
                      file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
   #
   my.ggplot.op( plot = plot, pre = pre, sur = sur ,

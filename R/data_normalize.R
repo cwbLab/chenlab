@@ -9,7 +9,7 @@
 #' @export
 #'
 
-wb.data_normalize <- function( count_file , op.dir = '.' ){
+w.data_normalize <- function( count_file , op.dir = '.' ){
   library(scater)
   library(stringr)
 

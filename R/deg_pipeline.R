@@ -14,7 +14,7 @@
 #'
 #' @export
 #'
-wb.deg_pipeline <- function( counts,tpm,group,contrast,p.adj=0.05,FC=2,write = F){
+w.deg_pipeline <- function( counts,tpm,group,contrast,p.adj=0.05,FC=2,write = F){
   ipcounts <- counts
   iptpm <- tpm
   ipgroups <- group

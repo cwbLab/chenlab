@@ -22,15 +22,11 @@
 #'
 #' @export
 #'
-wb.packageCheck <- function( package.name, method = 'I', interactive.install = T , check.only = F ){
+w.packageCheck <- function( package.name, method = 'I', interactive.install = TRUE, check.only = FALSE ){
 
   ######check.only
   if( check.only ){
-    if (requireNamespace(package.name, quietly = TRUE)){
-      return(invisible(TRUE))
-    }else{
-      return(invisible(FALSE))
-    }
+    return(invisible(requireNamespace(package.name, quietly = TRUE)))
   }
 
   #######
@@ -42,6 +38,7 @@ wb.packageCheck <- function( package.name, method = 'I', interactive.install = T
   if( method == 'I' ){
     method = sprintf("utils::install.packages( '%s' )", package.name)
   }else if( method == 'B' ){
+    if( !requireNamespace("BiocManager", quietly = TRUE) ){  utils::install.packages("BiocManager")  }
     method = sprintf("BiocManager::install( '%s' )", package.name)
   }
 
@@ -49,8 +46,8 @@ wb.packageCheck <- function( package.name, method = 'I', interactive.install = T
   message(sprintf("✅️ Recommended way to install: %s.", method))
 
   #
-  to_install <- T
-  if( interactive.install ){
+  to_install <- TRUE
+  if( interactive.install & base::interactive() ){
     choice <- utils::menu(c("Yes", "No"), title = sprintf("⚠️ Do you want to install '%s' using recommended way?", package.name))
     to_install <- ( choice == 1 )
   }
@@ -68,8 +65,8 @@ wb.packageCheck <- function( package.name, method = 'I', interactive.install = T
   if (requireNamespace(package.name, quietly = TRUE)) {
     message(sprintf("✅️ Package '%s' was successfully installed automatically.", package.name))
     return(invisible(TRUE))
-  } else {
-    message(sprintf("❗ Package '%s' was not installed successfully. Please install manually using: %s.", package.name, method))
+  }else{
+    message(sprintf("❗ Package '%s' is required but not installed. Please install manually using: %s.", package.name, method))
     return(invisible(FALSE))
   }
   #

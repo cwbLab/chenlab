@@ -10,9 +10,9 @@
 #' A ggplot2 object.
 #'
 #' @export
-wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
+w.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
                                  name.size = 10){
-  wb.packageCheck( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
+  w.packageCheck( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
   #
   library(data.table)
   library(ggplot2)
@@ -36,7 +36,7 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
   }
 
   #
-  pdata <- wb.smc(1:length(split_groups), function(x) {
+  pdata <- w.smc(1:length(split_groups), function(x) {
     g = paste0("group", x)
     v = lapply(split_groups[[x]], function(y) {
       detect <- tryCatch({
@@ -68,7 +68,7 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
 
   #
   pdata <- data.frame(rbindlist(pdata))
-  ps <- wb.smc(unique(pdata$group), function(x) {
+  ps <- w.smc(unique(pdata$group), function(x) {
     sdata <- pdata[pdata$group == x, ]
     p <- ggplot(sdata, aes(x = height, y = name, fill = color)) +
       geom_tile(  ) + scale_fill_identity() +
@@ -97,7 +97,7 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
 
 
 #
-#' Get colors from a palette
+#' Get colors from a SCP palette / Preview palette
 #'
 #' @param palette_names A palette name in SCP package
 #' @param ncolor Number of colors returned
@@ -105,16 +105,16 @@ wb.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
 #' @param cat Whether to print colors
 #'
 #' @returns
-#' A color vector.
+#' A named vector of color names.
 #'
 #' @export
-wb.palette_get <- function( palette_names = NULL , ncolor = 5 , colors = NULL , cat = F   ){
-  #
-  library( crayon  )
+#'
+w.palette_view <- function( palette_names = NULL , ncolor = 5 , colors = NULL , cat = F   ){
+
   #
   if( !is.null( palette_names ) ){
 
-    wb.packageCheck( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
+    w.packageCheck( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
 
     scp_colors <- SCP::palette_scp( palette = palette_names , n = 100 )
     #
@@ -123,10 +123,13 @@ wb.palette_get <- function( palette_names = NULL , ncolor = 5 , colors = NULL , 
     #
     color = as.character( final_colors  )
   }
-  if( ! is.null( colors  )  ){ color = colors   }
+  if( ! is.null( colors  )  ){ color = as.character(colors)   }
   #cat
   if ( cat ){
     for (col in color) {
+      #
+      w.packageCheck( "crayon" , method = "I"  )
+      suppressMessages( library( crayon  ) )
       #
       col_func <- crayon::make_style( col )
 
@@ -136,11 +139,12 @@ wb.palette_get <- function( palette_names = NULL , ncolor = 5 , colors = NULL , 
       cat( myfg(col_func( paste0(  col , paste(rep( ' ', 60 ) ,collapse = '' )  ) ))   )
 
       mybg <- make_style(rgb(rgbs[1], rgbs[2], rgbs[3]), bg = F)
-      cat( mybg(col_func( paste0(' ', col , '\n'  ) ))  )
+      cat( mybg(col_func( paste0( sprintf( "-%d: %s" , which(  color == col )  , col ) , '\n'  ) ))  )
     }
-    cat('Colors:\n')
-    #
   }
-  return( as.character(color)  )
+  #op
+  names(color) <- seq( 1 , length(color) , 1 )
+
+  return( invisible( color ))
   #
 }

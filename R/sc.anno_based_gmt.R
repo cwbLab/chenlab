@@ -26,9 +26,9 @@
 #' @export
 #'
 #'
-wb.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
+w.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
   #
-  wb.packageCheck( "Seurat" , method = "I"  )
+  w.packageCheck( "Seurat" , method = "I"  )
 
   ###load required packages
   library(stringr);library(dplyr);library(GSEABase)
@@ -72,7 +72,7 @@ wb.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
       #estimate not 0 cell proportion and abundance of markers for each cluster
       split_data <- SplitObject(seurat_class)
       split_res <- lapply(split_data, function(x){ as.data.frame( GetAssayData( x, layer = 'data' ) )})
-      new_res <- wb.smc(1:nrow(ult_res),function(x){
+      new_res <- w.smc(1:nrow(ult_res),function(x){
         x = ult_res[x,] %>% unlist() %>% as.character()
         genes <- str_split(x[[2]],';')[[1]]
         proportin_res <- lapply(genes, function(y){
