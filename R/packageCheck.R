@@ -22,6 +22,7 @@
 #'
 #' @export
 #'
+#'
 w.packageCheck <- function( package.name, method = 'I', interactive.install = TRUE, check.only = FALSE ){
 
   ######check.only
