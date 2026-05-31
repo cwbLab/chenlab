@@ -22,7 +22,7 @@
 #'
 #' @export
 #'
-wb.packageCheck <- function( package.name, method = 'I', interactive.install = TRUE, check.only = FALSE ){
+w.packageCheck <- function( package.name, method = 'I', interactive.install = TRUE, check.only = FALSE ){
 
   ######check.only
   if( check.only ){
@@ -66,7 +66,7 @@ wb.packageCheck <- function( package.name, method = 'I', interactive.install = T
     message(sprintf("✅️ Package '%s' was successfully installed automatically.", package.name))
     return(invisible(TRUE))
   }else{
-    message(sprintf("❗ Package '%s' was not installed successfully. Please install manually using: %s.", package.name, method))
+    message(sprintf("❗ Package '%s' is required but not installed. Please install manually using: %s.", package.name, method))
     return(invisible(FALSE))
   }
   #
