@@ -12,7 +12,7 @@
 #' @export
 w.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
                                  name.size = 10){
-  w.packageCheck( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
+  w.package_install( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
   #
   library(data.table)
   library(ggplot2)
@@ -114,7 +114,7 @@ w.palette_view <- function( palette_names = NULL , ncolor = 5 , colors = NULL , 
   #
   if( !is.null( palette_names ) ){
 
-    w.packageCheck( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
+    w.package_install( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
 
     scp_colors <- SCP::palette_scp( palette = palette_names , n = 100 )
     #
@@ -128,7 +128,7 @@ w.palette_view <- function( palette_names = NULL , ncolor = 5 , colors = NULL , 
   if ( cat ){
     for (col in color) {
       #
-      w.packageCheck( "crayon" , method = "I"  )
+      w.package_install( "crayon" , method = "I"  )
       suppressMessages( library( crayon  ) )
       #
       col_func <- crayon::make_style( col )

@@ -75,8 +75,8 @@ w.convert_id <- function( genes,ref,ip.type = NULL,op.type,
                            type = 'first', homologous_species = NULL,threads = NULL ){
 
   #
-  w.packageCheck(  "AnnotationDbi",method = "B" )
-  w.packageCheck(  "homologene",method = "B" )
+  w.package_install(  "AnnotationDbi",method = "B" )
+  w.package_install(  "homologene",method = "B" )
   #
   library(parallel)
   library(data.table)

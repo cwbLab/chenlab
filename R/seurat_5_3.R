@@ -6,7 +6,7 @@
 #' @export
 w.seurat_5_3 <-function( seurat, v = 'V3'  ){
   #
-  w.packageCheck( "Seurat" , method = "I"  )
+  w.package_install( "Seurat" , method = "I"  )
 
   #
   new_seurat <- scCustomize::Convert_Assay( seurat_object = seurat , convert_to = v  )

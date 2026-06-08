@@ -45,7 +45,7 @@
 #' ( p1 | p2 ) + patchwork::plot_annotation( tag_levels = list(c('raw', 'fine'), '1') )
 #'
 w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 , plot = T ){
-  w.packageCheck( "Seurat" , method = "I"  )
+  w.package_install( "Seurat" , method = "I"  )
 
   #
   library(Seurat)

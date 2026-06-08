@@ -21,7 +21,7 @@
 #'
 w.sc.markers_decision <- function( object , gmt , top = 30 ){
 
-  w.packageCheck( "Seurat" , method = "I"  )
+  w.package_install( "Seurat" , method = "I"  )
 
   #
   library(dplyr);library(clusterProfiler)

@@ -29,7 +29,7 @@
 #'
 w.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
   #
-  w.packageCheck( "Seurat" , method = "I"  )
+  w.package_install( "Seurat" , method = "I"  )
 
   ###load required packages
   library(stringr);library(dplyr);library(GSEABase)
@@ -124,6 +124,14 @@ w.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T ,
   #4
   anno.res <- my_markers_anno(seurat_class=mysc,top_res=top_pos,markers_gmt=mygmt,source=source,write = write )
 
+  #5.sort
+  suppressWarnings( detect <- as.numeric( anno.res$cluster ) )
+  if(  !( NA %in% detect )   ){
+    #
+    anno.res$cluster  <- as.numeric( anno.res$cluster )
+    anno.res <- dplyr::arrange(  anno.res , cluster , -markers_number )
+    #
+  }
   #
-  return( anno.res )
+  return( as.data.frame( anno.res ) )
 }
