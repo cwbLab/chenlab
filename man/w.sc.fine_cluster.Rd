@@ -29,9 +29,9 @@ w.sc.fine_cluster(
 \value{
 A list object:
 
-(1) conversion_result: mapping between original clusters and converted clusters.
+(1) final_cluster: a vector of converted cluster labels for each cell, corresponding one-to-one to the column names (cell barcodes) of the Seurat object.
 
-(2) final_cluster: a vector of converted cluster labels for each cell, corresponding one-to-one to the column names (cell barcodes) of the Seurat object.
+(2) conversion_result: mapping between original clusters and converted clusters.
 }
 \description{
 Reassigns cluster labels in a Seurat object based on inter-cluster distances, such that clusters with higher transcriptomic similarity (i.e., shorter distances) are assigned consecutive numeric labels.
@@ -47,18 +47,18 @@ p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 fine.res <- w.sc.fine_cluster( seurat.obj )
 
 #1
+seurat.obj$new.cluster <- fine.res[['final_cluster']]
+Idents( seurat.obj ) <- 'new.cluster'
+
+#2
 new_name <- fine.res[['conversion_result']]
 new.cluster <- new_name$new_cluster
 names(new.cluster) <- new_name$raw_cluster
 seurat.obj <- RenameIdents( seurat.obj, new.cluster )
 
-#2
-seurat.obj$new.cluster <- fine.res[['final_cluster']]
-Idents( seurat.obj ) <- 'new.cluster'
-
 p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap"  )
 
 ### plot
-p1 | p2
+( p1 | p2 ) + patchwork::plot_annotation( tag_levels = list(c('raw', 'fine'), '1') )
 
 }

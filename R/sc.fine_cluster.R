@@ -15,14 +15,14 @@
 #' @returns
 #' A list object:
 #'
-#' (1) conversion_result: mapping between original clusters and converted clusters.
+#' (1) final_cluster: a vector of converted cluster labels for each cell, corresponding one-to-one to the column names (cell barcodes) of the Seurat object.
 #'
-#' (2) final_cluster: a vector of converted cluster labels for each cell, corresponding one-to-one to the column names (cell barcodes) of the Seurat object.
+#' (2) conversion_result: mapping between original clusters and converted clusters.
 #'
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' seurat.obj
 #' p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 #'
@@ -30,19 +30,19 @@
 #' fine.res <- w.sc.fine_cluster( seurat.obj )
 #'
 #' #1
+#' seurat.obj$new.cluster <- fine.res[['final_cluster']]
+#' Idents( seurat.obj ) <- 'new.cluster'
+#'
+#' #2
 #' new_name <- fine.res[['conversion_result']]
 #' new.cluster <- new_name$new_cluster
 #' names(new.cluster) <- new_name$raw_cluster
 #' seurat.obj <- RenameIdents( seurat.obj, new.cluster )
 #'
-#' #2
-#' seurat.obj$new.cluster <- fine.res[['final_cluster']]
-#' Idents( seurat.obj ) <- 'new.cluster'
-#'
 #' p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap"  )
 #'
 #' ### plot
-#' p1 | p2
+#' ( p1 | p2 ) + patchwork::plot_annotation( tag_levels = list(c('raw', 'fine'), '1') )
 #'
 w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 , plot = T ){
   w.packageCheck( "Seurat" , method = "I"  )
@@ -143,9 +143,9 @@ w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downs
   new_cluster <- as.integer( Idents( seurat.obj ) )
   new_cluster <- factor(  new_cluster , levels = min(  new_cluster ) : max( new_cluster )    )
 
-  if( plot ){ print( p1 | p2  ) }
+  if( plot ){ print( ( p1 | p2 ) + patchwork::plot_annotation(tag_levels = list(c('raw', 'fine'), '1') ) ) }
 
   ##########
-  return( list(  conversion_result = trans_res , final_cluster = new_cluster  ) )
+  return( list(  final_cluster = new_cluster , conversion_result = trans_res  ) )
 }
 

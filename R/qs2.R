@@ -49,13 +49,13 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
   threads <- nthreads
 
   #
-  dots <- substitute(list(...))[-1]
+  dots <- base::substitute(list(...))[-1]
 
   # Q1
   if (length(dots) == 0) {
     #
-    obj_names <- ls(envir = envir)
-    obj_list  <- mget(obj_names, envir = envir)
+    obj_names <- base::ls(envir = envir)
+    obj_list  <- base::mget(obj_names, envir = envir)
 
     qs2::qs_save(object = obj_list, file = filename,
               compress_level = compress_level ,
@@ -66,8 +66,8 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
 
   } else {
     # Q2
-    obj_names <- sapply(dots, deparse)
-    obj_list  <- mget(obj_names, envir = envir)
+    obj_names <- base::sapply(dots, deparse)
+    obj_list  <- base::mget(obj_names, envir = envir)
 
     qs2::qs_save(object = obj_list, file = filename,
                  compress_level = compress_level ,
@@ -77,7 +77,7 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
     message(w.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ", filename)
   }
   #
-  return(invisible(NULL))
+  return(base::invisible(NULL))
 }
 
 
@@ -134,10 +134,10 @@ w.qread <- function( filename , return = FALSE ,
   if( delete ){  temp <- base::file.remove( filename )  }
   #
   if( !return ){
-    list2env(w_qload_obj_list, envir = envir)
-    return(invisible(NULL))
+    base::list2env(w_qload_obj_list, envir = envir)
+    return(base::invisible(NULL))
   }else{
-    if( length( w_qload_obj_list ) == 1  ){
+    if( base::length( w_qload_obj_list ) == 1  ){
       return(  w_qload_obj_list[[1]]  )
     }else{
       return( w_qload_obj_list )
