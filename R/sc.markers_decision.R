@@ -65,7 +65,7 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
     markers_number <- table( marker_res_top30$gene  ) %>% as.data.frame()
     s_marker_res_top30$cluster.number <- lapply(s_marker_res_top30$gene,
                                                 function(x) markers_number$Freq[markers_number$Var1 == x  ]
-                                                )
+    )
     #
     marker_used <- lapply(cells, function(x){
 
@@ -92,7 +92,7 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
     markers_number <- table( marker_res_top100$gene  ) %>% as.data.frame()
     s_marker_res_top100$cluster.number <- lapply(s_marker_res_top100$gene,
                                                  function(x) markers_number$Freq[markers_number$Var1 == x  ]
-                                                 )
+    )
 
     marker_used2 <- lapply(cells, function(x){
 
@@ -106,9 +106,9 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
       if( nrow(sd1) < 2 ){
         if( nrow(sd)  != 0 ){
           op = data.table( cell = x , gene = sd1$gene , pct.diff = sd1$pct.diff ,level = 3   )
-		  if( nrow(op) > 10 ){
-			op = data.table( cell = x , gene = sd1$gene[1:10] , pct.diff = sd1$pct.diff[1:10] ,level = 3   )
-		  }
+          if( nrow(op) > 10 ){
+            op = data.table( cell = x , gene = sd1$gene[1:10] , pct.diff = sd1$pct.diff[1:10] ,level = 3   )
+          }
         }else{
           #
           sm <- marker_res %>% filter( marker_y == 'Y' & cluster == x )
@@ -133,18 +133,41 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
     #
     number <- table( marker_used$gene  ) %>% as.data.frame()
     marker_used$hited_celltype <-  lapply(  marker_used$gene ,
-                                             function(x) number$Freq[ number$Var1 == x  ]
+                                            function(x) number$Freq[ number$Var1 == x  ]
     ) %>% as.character()
+
+    marker_used$temp <- paste(  marker_used$cell , marker_used$gene , sep = '..|..' )
+    marker_used <- marker_used[ order( marker_used$level , decreasing = F  )   ,  ]
+    marker_used <- marker_used[ !duplicated( marker_used$temp  )  ,   ]
+    marker_used$temp <- NULL
+
+    #4. Additional Information
+    suppressMessages(
+      aveExp <- AverageExpression( object, features =  unique( marker_used$gene  )  )
+    )
+    aveExp <- as.matrix(  aveExp[[1]]  ) %>% as.data.frame()
+    add_info  <- lapply( 1:nrow( marker_used ) , function(x){
+      x = unlist( marker_used[x , ]  )
+      t1 = marker_res$pct.1[ marker_res$cluster == x[[1]] & marker_res$gene == x[[2]] ]
+      t2 = marker_res$pct.2[ marker_res$cluster == x[[1]] & marker_res$gene == x[[2]] ]
+      t3 = aveExp[   rownames(aveExp) == x[[2]]  ,  colnames(aveExp) == x[[1]]   ]
+      #
+      return( c( pct.1 = t1, pct.2 = t2 , aveExp = t3 )  )
+    }) %>% data.frame() %>% t() %>% data.frame()
+    colnames(add_info) <- c(  "pct.1", "pct.2", "aveExp" )
+    marker_used <- cbind( marker_used , add_info  )
+
     #
     return( marker_used )
   }
 
   #run
   markers_used <- get_marker_used( gmt_data = mygmt ,
-                                     marker_res = mymarkers ,
-                                     top = top
-                                     )
+                                   marker_res = mymarkers ,
+                                   top = top
+  )
 
-  #
+  ######
   return( markers_used )
 }
+

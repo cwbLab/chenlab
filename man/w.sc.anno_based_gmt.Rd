@@ -2,7 +2,7 @@
 % Please edit documentation in R/sc.anno_based_gmt.R
 \name{w.sc.anno_based_gmt}
 \alias{w.sc.anno_based_gmt}
-\title{Title}
+\title{Annotate clusters for scRNA-seq}
 \usage{
 w.sc.anno_based_gmt(object, gmt, markers, top = 20, write = T, source = "gmt")
 }

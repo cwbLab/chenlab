@@ -12,7 +12,7 @@ w.ggop(
   res = 600,
   h = 5,
   w = 5,
-  model = "F1"
+  mode = "F1"
 )
 }
 \arguments{
@@ -30,11 +30,13 @@ w.ggop(
 
 \item{w}{Width of the image (inch). For raster plots, the final image width is (w × res) pixels. For vector graphics, the final width is w inches.}
 
-\item{model}{There are two preview modes:
+\item{mode}{There are two preview modes:
 
 (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
 
-(2) F2 shows the image that has already been saved locally.
+(2) F2 shows the image that has already been saved locally, but zooming in and out is not supported.
+
+(3) If local image preview is not required, set this parameter to FALSE.
 
 By default, preview mode F1 is used.}
 }

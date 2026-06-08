@@ -7,7 +7,7 @@
 w.qsave(
   filename,
   ...,
-  envir = .GlobalEnv,
+  envir = base::parent.frame(),
   compress_level = qs2::qopt("compress_level"),
   shuffle = qs2::qopt("shuffle"),
   nthreads = 1

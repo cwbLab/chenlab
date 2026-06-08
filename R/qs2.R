@@ -38,7 +38,7 @@
 #' @export
 #'
 #'
-w.qsave <- function(filename, ... , envir = .GlobalEnv,
+w.qsave <- function(filename, ... , envir = base::parent.frame(),
                      compress_level = qs2::qopt( "compress_level" ),
                      shuffle = qs2::qopt("shuffle"), nthreads = 1
 ){
@@ -88,10 +88,11 @@ w.qsave <- function(filename, ... , envir = .GlobalEnv,
 #' A wrapper around `qs2::qs_read` for loading objects saved with `w.qsave` into the R environment.
 #'
 #' @param filename The file name/path.
-#' @param envir The target environment into which the variables will be loaded.
-#' @param return Return the saved objects as variables instead of loading them into the target environment.
+#' @param return Return the saved objects as variables instead of loading them into the target environment. Default: FALSE.
 #'
 #' If True, return the object directly when only one object is saved, similar to `base::readRDS`; otherwise return a list of all objects.
+#' @param envir The target environment into which the variables will be loaded. This argument is ignored when `return` is `TRUE`.
+#' @param delete Whether to delete the local file after reading is completed. Default: FALSE.
 #' @param nthreads Consistent with `qs2::qs_read`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
 #'
 #' @returns
@@ -118,7 +119,8 @@ w.qsave <- function(filename, ... , envir = .GlobalEnv,
 #'
 #' @export
 #'
-w.qread <- function( filename , envir = .GlobalEnv , return = F , nthreads = 1  ){
+w.qread <- function( filename , return = FALSE ,
+                     envir = base::parent.frame() , delete = FALSE , nthreads = 1  ){
   #
   message( w.log_time_title() , w.log_text_coloured( s.c = 's' ) )
   #
@@ -128,6 +130,8 @@ w.qread <- function( filename , envir = .GlobalEnv , return = F , nthreads = 1  
   w_qload_obj_list <- qs2::qs_read( file = filename,  nthreads =  threads)
   message(w.log_time_title() ,"Loaded ", length(w_qload_obj_list), " objects from ", filename)
 
+  #
+  if( delete ){  temp <- base::file.remove( filename )  }
   #
   if( !return ){
     list2env(w_qload_obj_list, envir = envir)

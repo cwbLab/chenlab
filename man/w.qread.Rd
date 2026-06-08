@@ -4,16 +4,24 @@
 \alias{w.qread}
 \title{w.qread}
 \usage{
-w.qread(filename, envir = .GlobalEnv, return = F, nthreads = 1)
+w.qread(
+  filename,
+  return = FALSE,
+  envir = base::parent.frame(),
+  delete = FALSE,
+  nthreads = 1
+)
 }
 \arguments{
 \item{filename}{The file name/path.}
 
-\item{envir}{The target environment into which the variables will be loaded.}
-
-\item{return}{Return the saved objects as variables instead of loading them into the target environment.
+\item{return}{Return the saved objects as variables instead of loading them into the target environment. Default: FALSE.
 
 If True, return the object directly when only one object is saved, similar to \code{base::readRDS}; otherwise return a list of all objects.}
+
+\item{envir}{The target environment into which the variables will be loaded. This argument is ignored when \code{return} is \code{TRUE}.}
+
+\item{delete}{Whether to delete the local file after reading is completed. Default: FALSE.}
 
 \item{nthreads}{Consistent with \code{qs2::qs_read}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }

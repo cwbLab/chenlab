@@ -1,4 +1,4 @@
-#' Fine cluster
+#' Fine cluster for seurat object
 #'
 #' @description
 #' Reassigns cluster labels in a Seurat object based on inter-cluster distances, such that clusters with higher transcriptomic similarity (i.e., shorter distances) are assigned consecutive numeric labels.
@@ -10,28 +10,41 @@
 #' @param dims Dimensions of reduction to use as input. Default to using all dimensions. Custom dimension values can be provided, such as 1:20.
 #' @param downsample Downsample clusters with a cell count greater than(>) this threshold to the specified value in order to accelerate computation.
 #' @param seed Random seed used for downsampling.
+#' @param plot Plot figures to compare clusters before and after conversion.
 #'
 #' @returns
-#' A data.frame object.
+#' A list object:
+#'
+#' (1) conversion_result: mapping between original clusters and converted clusters.
+#'
+#' (2) final_cluster: a vector of converted cluster labels for each cell, corresponding one-to-one to the column names (cell barcodes) of the Seurat object.
 #'
 #' @export
 #'
 #' @examples
+#' 
 #' seurat.obj
 #' p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 #'
-#' # rename
-#' new_name <- w.sc.fine_cluster( seurat.obj )
+#' ### rename
+#' fine.res <- w.sc.fine_cluster( seurat.obj )
+#'
+#' #1
+#' new_name <- fine.res[['conversion_result']]
 #' new.cluster <- new_name$new_cluster
 #' names(new.cluster) <- new_name$raw_cluster
 #' seurat.obj <- RenameIdents( seurat.obj, new.cluster )
+#'
+#' #2
+#' seurat.obj$new.cluster <- fine.res[['final_cluster']]
+#' Idents( seurat.obj ) <- 'new.cluster'
+#'
 #' p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap"  )
 #'
+#' ### plot
 #' p1 | p2
 #'
-#'
-#'
-w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 ){
+w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 , plot = T ){
   w.packageCheck( "Seurat" , method = "I"  )
 
   #
@@ -116,6 +129,7 @@ w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downs
   colnames(trans_res) <- c( "raw_cluster",  "new_cluster"   )
 
   ##########plot
+  raw_cluster <- Idents( seurat.obj  )
   suppressMessages(
     p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = reduction )
   )
@@ -126,10 +140,12 @@ w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downs
   suppressMessages(
     p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = reduction  )
   )
+  new_cluster <- as.integer( Idents( seurat.obj ) )
+  new_cluster <- factor(  new_cluster , levels = min(  new_cluster ) : max( new_cluster )    )
 
-  print( p1 | p2  )
+  if( plot ){ print( p1 | p2  ) }
 
   ##########
-  return( trans_res )
+  return( list(  conversion_result = trans_res , final_cluster = new_cluster  ) )
 }
 

@@ -118,21 +118,24 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
 #' @param res Dots per inch (DPI) resolution.
 #' @param h Height of the image (inch). For raster plots, the final image height is (h × res) pixels. For vector graphics, the final height is h inches.
 #' @param w Width of the image (inch). For raster plots, the final image width is (w × res) pixels. For vector graphics, the final width is w inches.
-#' @param model There are two preview modes:
+#' @param mode There are two preview modes:
 #'
 #' (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
 #'
-#' (2) F2 shows the image that has already been saved locally.
+#' (2) F2 shows the image that has already been saved locally, but zooming in and out is not supported.
+#'
+#' (3) If local image preview is not required, set this parameter to FALSE.
 #'
 #' By default, preview mode F1 is used.
 #'
 #' @export
 #'
 w.ggop <- function( plot, pre = NULL, sur = '.png' ,
-                     file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
+                     file = NULL , res = 600 , h = 5 , w = 5 , mode = 'F1'  ){
   #
   my.ggplot.op( plot = plot, pre = pre, sur = sur ,
-               file = file , res = res , h = h , w = w , model = model  )
+               file = file , res = res , h = h , w = w , model = mode
+               )
   #
 }
 
