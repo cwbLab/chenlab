@@ -1,3 +1,68 @@
+
+
+#' Lapply with progress bar
+#'
+#' @description
+#' A wrapper for `base::lapply` that displays a synchronized progress bar.
+#'
+#'
+#' @param X Same as `base::lapply`.
+#' @param FUN Same as `base::lapply`.
+#' @param ... Same as `base::lapply`.
+#' @param pb Show progress bar. Default is TRUE.
+#' @param time Display execution time. Default is TRUE.
+#' @param unlist Apply `base::unlist` to the final result. Default is FALSE.
+#'
+#' @returns
+#' Returns results consistent with `base::lapply`.
+#'
+#' @export
+#'
+w.pblapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
+
+  #
+  start_time <- Sys.time()
+  if( time ){ message( w.log_time_title() , w.log_text_coloured( s.c = 's' ) , 'Tasks: ' , length(X) ,'.'  )  }
+
+  #
+  result <- NULL
+  if( pb ){
+    #
+    w.package_install( 'pbmcapply' )
+
+    total_length <- length(X) + 1
+    mypb <- pbmcapply::progressBar( min = 1 , max = total_length , initial = 1, style = "ETA"  )
+
+    result <- base::list()
+    for (  i in  seq(  2 , total_length , 1 )  ){
+      result <- c( result , base::lapply(  X = X[ i - 1 ] , FUN = FUN , ... ) )
+      utils::setTxtProgressBar(mypb, i )
+    }
+    base::close(mypb)
+    #
+    names(result) <- names(X)
+
+  }else{
+    result  <- base::lapply(  X = X , FUN = FUN , ... )
+    names(result) <- names(X)
+  }
+  #
+  end_time <- Sys.time()
+  if( time ){ message( w.log_time_title() ,
+                       w.log_text_coloured( s.c = 'c' ) ,
+                       w.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
+  }
+  #
+  if( unlist ){
+    return(  base::unlist( result  )   )
+  }else{
+    return(result)
+  }
+}
+
+
+
+
 #' Smart mclapply
 #'
 #' @description
@@ -15,13 +80,15 @@
 #' @param mem.max Maximum amount of memory (in GB) allowed when automatically determining the number of cores. Defaults to NULL, which will automatically detect the maximum available system memory.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
+#' @param unlist Apply `base::unlist` to the final result. Default is FALSE.
 #'
 #' @return
 #' Returns results consistent with `parallel::mclapply`.
 #'
 #' @export
 #'
-w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = NULL , pb = T , time = T){
+w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = NULL ,
+                  pb = T , time = T , unlist = F ){
   start_time <- Sys.time()
 
   #1
@@ -34,9 +101,9 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
     if( time ){ message( w.log_time_title() , w.log_text_coloured( s.c = 's' ) , 'Tasks: ' , length(X) ,'.'  )  }
     #
     if(pb){
-      res <- pbmcapply::pbmclapply(X, FUN, ... ,mc.cores = 1 )
+      res <- w.pblapply( X = X, FUN = FUN, ... , time = F )
     }else{
-      res <- base::lapply(X, FUN, ...)
+      res <- base::lapply( X = X, FUN = FUN, ... )
     }
     #
     end_time <- Sys.time()
@@ -44,7 +111,13 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
                          w.log_text_coloured( s.c = 'c' ) ,
                          w.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
     }
-    return(res)
+    #
+    if( unlist ){
+      return(  base::unlist( res )  )
+    }else{
+      return(res)
+    }
+
   }
 
   #
@@ -61,8 +134,14 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
     #
     mean_used <- c()
     for(  temp_idx  in  sample_idx  ){
-      temp <- max(  peakRAM::peakRAM({   test_results <- base::lapply(X[temp_idx], FUN, ...)   })[['Peak_RAM_Used_MiB']] , 0.1   )
-      mean_used <- c( mean_used , temp  )
+      temp <- bench::bench_memory(
+            suppressMessages( suppressWarnings( capture.output(
+              test_results <- base::lapply(X = X[temp_idx], FUN = FUN, ...)
+            ) ) )
+          )[['mem_alloc']]
+      temp <- max( as.numeric( temp ) / 1024^2 , 0.1 )
+
+      mean_used <- c( mean_used , temp )
     }
 
     #minimum,0.5 MB
@@ -132,8 +211,8 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
         curr_idx <- indices[[i]]
         #
         batch_res <- parallel::mclapply(
-          X[curr_idx],
-          FUN,
+          X = X[curr_idx],
+          FUN = FUN,
           ...,
           mc.cores = current_cores
         )
@@ -151,6 +230,7 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
     )
     #
   }else{
+    threads <- max(1, threads)
     #
     if( time ){ message(
       w.log_time_title(),
@@ -160,9 +240,9 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
     ) }
     #
     if(pb){
-      final_results <- pbmcapply::pbmclapply( X = X, FUN = FUN, ...,mc.cores = as.integer(threads)  )
+      final_results <- pbmcapply::pbmclapply( X = X, FUN = FUN, ..., mc.cores = as.integer(threads)  )
     }else{
-      final_results <- parallel::mclapply( X = X, FUN = FUN, ...,mc.cores = as.integer(threads)  )
+      final_results <- parallel::mclapply( X = X, FUN = FUN, ..., mc.cores = as.integer(threads)  )
     }
     #
   }
@@ -174,7 +254,11 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
                        w.log_time_runtime(  t.minor = start_time ,t.major = end_time  ))
   }
   #
-  return(final_results)
+  if( unlist ){
+    return(  base::unlist( final_results )  )
+  }else{
+    return(final_results)
+  }
 }
 
 
@@ -189,15 +273,19 @@ w.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = 
 #' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
+#' @param unlist Apply `base::unlist` to the final result. Default is FALSE.
 #'
 #' @export
-w.mc <- function( X, FUN, ..., mc.cores = NULL, pb = T ,time = T  ){
-  if( is.null( mc.cores  ) ){  mc.cores = max( parallel::detectCores() - 1 , 1 ) }
+w.mc <- function( X, FUN, ..., mc.cores = NULL, pb = T ,time = T , unlist = F  ){
+  if( is.null( mc.cores  ) ){  mc.cores = parallel::detectCores() - 1 }
+  mc.cores <- max(1, mc.cores)
   #
-  res <- w.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = NULL , pb = pb ,time = time )
+  res <- w.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = NULL ,
+               pb = pb ,time = time , unlist = unlist )
   #
   return( res )
 }
+
 
 
 

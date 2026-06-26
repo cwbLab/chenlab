@@ -11,7 +11,7 @@ w.mtx_unique_row(exp, raw_row, convert_name, type = "max")
 
 \item{raw_row}{Original gene vector (usually the row names).}
 
-\item{convert_name}{onverted gene vector (corresponding to raw_row).}
+\item{convert_name}{The converted gene vector (corresponding to raw_row) may include NA, and any rows corresponding to NA entries will be excluded from the final converted dataset.}
 
 \item{type}{Method for retaining data. Options are 'max', 'min', 'sum', 'median', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned.}
 }

@@ -48,10 +48,8 @@ w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downs
   w.package_install( "Seurat" , method = "I"  )
 
   #
-  library(Seurat)
-  library(dplyr)
-  library(patchwork)
-  library(data.table)
+  w.package_library( dplyr , patchwork ,  Seurat ,  data.table   )
+
   #
   seurat.obj <- object
   #

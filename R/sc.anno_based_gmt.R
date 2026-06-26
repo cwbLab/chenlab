@@ -32,9 +32,8 @@ w.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T ,
   w.package_install( "Seurat" , method = "I"  )
 
   ###load required packages
-  library(stringr);library(dplyr);library(GSEABase)
-  library(Seurat);library(data.table)
-
+  w.package_library( dplyr , GSEABase , stringr , Seurat ,  data.table   )
+  
   mysc <- object
   mygmt <- gmt
 

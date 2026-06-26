@@ -8,9 +8,10 @@ w.qsave(
   filename,
   ...,
   envir = base::parent.frame(),
+  version = 2,
   compress_level = qs2::qopt("compress_level"),
-  shuffle = qs2::qopt("shuffle"),
-  nthreads = 1
+  nthreads = 1,
+  shuffle = qs2::qopt("shuffle")
 )
 }
 \arguments{
@@ -22,35 +23,41 @@ We recommend using the \code{.qrds} extension when saving a single object, and \
 
 \item{envir}{The environment in which the objects are located.}
 
-\item{compress_level}{Consistent with the \code{qs2::qs_save}.}
+\item{version}{Version of the serialization package to use. Integer value:
+\itemize{
+\item 1: use the \code{qs} package
+\item 2: use the \code{qs2} package
+}}
 
-\item{shuffle}{Consistent with the \code{qs2::qs_save}.}
+\item{compress_level}{As with \code{qs::qsave} or \code{qs2::qs_save}.}
 
-\item{nthreads}{Consistent with the \code{qs2::qs_save}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
+\item{nthreads}{As with \code{qs::qsave} or \code{qs2::qs_save}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
+
+\item{shuffle}{As with the \code{qs2::qs_save}.}
 }
 \value{
 NULL.
 }
 \description{
-Wraps the \code{qs2::qs_save} function to enable fast serialization of either the entire R environment or a set of specified objects to a local file, with significantly improved performance compared to the base R functions \code{save}, \code{save.image} and \code{saveRDS}.
+Wraps the \code{save} function across different versions of the \code{qs} package to enable fast serialization of either the entire R environment or a set of specified objects to a local file, with significantly improved performance compared to the base R functions \code{save}, \code{save.image} and \code{saveRDS}.
 }
 \examples{
 x1 <- data.frame(int = sample(1e3, replace=TRUE), num = rnorm(1e3) )
 x2 <- data.frame(int = sample(1e4, replace=TRUE), num = rnorm(1e4) )
 x3 <- data.frame(int = sample(1e5, replace=TRUE), num = rnorm(1e5) )
 
-#1.entire R environment
+#1. entire R environment
 w.qsave( 'entire_R_environment.qdata' )
-#w.qread( 'entire_R_environment.qdata' )
+# w.qread( 'entire_R_environment.qdata' )
 
-#2.x1 and x2
+#2. x1 and x2
 w.qsave( 'x1_x2.qdata' , x1, x2 )
-#w.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
-#x1_x2_list <- w.qread( 'x1_x2.qdata' , return = T )    #return a list object
+# w.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
+# x1_x2_list <- w.qread( 'x1_x2.qdata' , return = T )    #return a list object
 
-#3.x1
+#3. x1
 w.qsave(  'x1.qrds' , x1 )
-#w.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
-#x1.copy <- w.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
+# w.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
+# x1.copy <- w.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
 
 }

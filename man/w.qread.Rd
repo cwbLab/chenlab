@@ -8,6 +8,7 @@ w.qread(
   filename,
   return = FALSE,
   envir = base::parent.frame(),
+  version = 2,
   delete = FALSE,
   nthreads = 1
 )
@@ -21,33 +22,53 @@ If True, return the object directly when only one object is saved, similar to \c
 
 \item{envir}{The target environment into which the variables will be loaded. This argument is ignored when \code{return} is \code{TRUE}.}
 
+\item{version}{Version of the serialization package to use. Integer value:
+\itemize{
+\item 1: use the \code{qs} package
+\item 2: use the \code{qs2} package
+}
+
+No worries! If reading fails using the specified version, other version-specific functions will be automatically called to attempt loading the object.}
+
 \item{delete}{Whether to delete the local file after reading is completed. Default: FALSE.}
 
-\item{nthreads}{Consistent with \code{qs2::qs_read}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
+\item{nthreads}{As with \code{qs::qread} or \code{qs2::qs_read}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }
 \value{
 NULL.
 }
 \description{
-A wrapper around \code{qs2::qs_read} for loading objects saved with \code{w.qsave} into the R environment.
+Loads objects saved via \code{w.qsave} into the R environment.
+
+It first attempts to read the object using all available versions of the \code{qs} package. If none succeed, it will automatically fall back to \code{base::load} and \code{base::readRDS} to ensure backward compatibility and robust loading.
 }
 \examples{
 x1 <- data.frame(int = sample(1e3, replace=TRUE), num = rnorm(1e3) )
 x2 <- data.frame(int = sample(1e4, replace=TRUE), num = rnorm(1e4) )
 x3 <- data.frame(int = sample(1e5, replace=TRUE), num = rnorm(1e5) )
 
-#1.entire R environment
+#1. entire R environment
 w.qsave( 'entire_R_environment.qdata' )
-#w.qread( 'entire_R_environment.qdata' )
+# w.qread( 'entire_R_environment.qdata' )
 
-#2.x1 and x2
+#2. x1 and x2
 w.qsave( 'x1_x2.qdata' , x1, x2 )
-#w.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
-#x1_x2_list <- w.qread( 'x1_x2.qdata' , return = T )    #return a list object
+# w.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
+# x1_x2_list <- w.qread( 'x1_x2.qdata' , return = T )    #return a list object
 
-#3.x1
+#3. x1
 w.qsave(  'x1.qrds' , x1 )
-#w.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
-#x1.copy <- w.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
+# w.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
+# x1.copy <- w.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
+
+#4. base::save
+base::save( x1 , x2 , file = 'x1_x2.data'  )
+# w.qread( 'x1_x2.data' )    #load x1 and x2 into the R environment
+# x1_x2_list <- w.qread( 'x1_x2.data' , return = T )    #return a list object
+
+#5. base::saveRDS
+base::saveRDS( x1 , file = 'x1.rds'  )
+# w.qread( 'x1.rds' , return = F )    #load x1 into the R environment
+# x1.copy <- w.qread( 'x1.rds' , return = T )    #assign x1 to a new R object (x1.copy).
 
 }

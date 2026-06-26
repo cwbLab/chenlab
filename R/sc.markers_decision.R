@@ -5,40 +5,48 @@
 #' Determine the most representative marker genes for each cluster based on the GMT file and differential expression of markers.
 #'
 #'
-#' @param object A processed Seurat object with computed embeddings (e.g., PCA/UMAP) and defined cluster identities accessible via the `Seurat::Idents` function.
+#' @param object Two methods:
+#' 1. Seurat object. A processed Seurat object with computed embeddings (e.g., PCA/UMAP) and defined cluster identities accessible via the `Seurat::Idents` function.
+#'
+#' 2. The raw output returned by this function. It can be provided as input to a subsequent run, in which case the existing `DEG` results will be reused for downstream analyses without re-computing differential expression.
 #' @param gmt An absolute file path to a GMT file containing candidate marker genes for each cell type.
 #' @param top Provide an integer specifying the number of top-ranked positive markers (sorted by avg_log2FC) to retain for downstream analysis.
+#' @param level1.threshold Differential expression threshold that Level 1 markers must satisfy.
 #'
 #' @returns
-#' A data.frame object. The `level` column indicates the confidence level, with level 1 being the highest and level 4 the lowest.
+#' A list object. The final results are available in the `markers` component.
 #'
-#' 1. This function comprehensively evaluates the differential expression and expression specificity of marker genes to assign confidence levels. Levels 1 and 2 indicate high confidence, while levels 3 and 4 are for reference only and are recommended to be manually reviewed and filtered. Markers at level 1 should be retained as much as possible. For other levels, return no more than ten markers.
+#' This function comprehensively evaluates the differential expression and expression specificity of marker genes to assign confidence levels. The `level` column indicates the confidence level, with level 1 being the highest and level 4 the lowest.
 #'
-#' 2. Up to five specific marker genes are provided for each cell type.
+#' Levels 1 and 2 represent high-confidence markers. Levels 3 and 4 are provided for reference only and should be manually reviewed. Level 1 markers are retained without a strict limit whenever possible. For levels 2–4, no more than ten markers are returned.
 #'
+#' @examples
+#'
+#' marker1 <- w.sc.markers_decision( object = seurat.obj , gmt = 'test.gmt' , top = 20   )
+#' result1 <- marker1$markers
+#'
+#' marker2 <- w.sc.markers_decision( object =  marker1 , gmt = 'test.gmt' , top = 40   )
+#' result2 <- marker2$markers
+#'
+#' marker3 <- w.sc.markers_decision( object =  marker2 , gmt = 'new.gmt' , top = 40   )
+#' result3 <- marker3$markers
+#'
+#' #result4 produces the same results as result3.
+#' marker4 <- w.sc.markers_decision( object =  seurat.obj , gmt = 'new.gmt' , top = 40   )
+#' result4 <- marker4$markers
 #'
 #' @export
 #'
-w.sc.markers_decision <- function( object , gmt , top = 30 ){
+w.sc.markers_decision <- function( object , gmt , top = 20 , level1.threshold = 'avg_log2FC > 0.3 & p_val_adj < 0.05 & pct.1 > 0.3' ){
 
+  #
   w.package_install( "Seurat" , method = "I"  )
 
   #
-  library(dplyr);library(clusterProfiler)
-  library(Seurat);library(data.table)
+  w.package_library( dplyr , clusterProfiler ,  Seurat ,  data.table   )
 
-  #gmt
-  mygmt <- clusterProfiler::read.gmt( gmt )
-  mygmt$term <- as.character( mygmt$term  )
-
-  #get markers
-  mymarkers <- FindAllMarkers(object = object,logfc.threshold = 0, return.thresh = 2,
-                              min.pct = 0, only.pos = F , min.cells.feature = 0,
-                              min.cells.group = 0
-  )
-
-  ####
-  get_marker_used <- function( gmt_data, marker_res , top  ){
+  ######
+  get_marker_used <- function( gmt_data, marker_res , top , aveExp , level1.threshold = level1.threshold ){
     #
     cells <- unique(marker_res$cluster) %>% as.character()
     marker_res$pct.diff <- marker_res$pct.1  - marker_res$pct.2
@@ -56,8 +64,8 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
     } ) %>% unlist() %>% as.character()
 
     #2.based top
+    marker_res_top30 <- base::subset( marker_res , eval(parse(text = level1.threshold ) )  )
     marker_res_top30 <- marker_res %>%
-      filter( avg_log2FC > 0.2  & p_val_adj < 0.05  & pct.1  > 0.3 ) %>%
       group_by(cluster) %>%
       arrange(desc( avg_log2FC  ), .by_group=T) %>%
       top_n(n = top, wt = avg_log2FC )
@@ -100,7 +108,8 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
       sd <- arrange(  sd , -pct.diff , cluster.number )
 
       #
-      sd1 <- sd[ sd$cluster.number == 1,  ]
+      #sd1 <- sd[ sd$cluster.number == 1,  ]
+      sd1 <- sd
       op = NULL
       #
       if( nrow(sd1) < 2 ){
@@ -142,9 +151,6 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
     marker_used$temp <- NULL
 
     #4. Additional Information
-    suppressMessages(
-      aveExp <- AverageExpression( object, features =  unique( marker_used$gene  )  )
-    )
     aveExp <- as.matrix(  aveExp[[1]]  ) %>% as.data.frame()
     add_info  <- lapply( 1:nrow( marker_used ) , function(x){
       x = unlist( marker_used[x , ]  )
@@ -158,16 +164,43 @@ w.sc.markers_decision <- function( object , gmt , top = 30 ){
     marker_used <- cbind( marker_used , add_info  )
 
     #
+    marker_used <- marker_used[  , c(  1, 2, 8, 6, 7 , 3 , 4 ,5  )  ]
+
+    #
     return( marker_used )
   }
+
+  ######run
+  if( 'list' %in% class( object ) & 'aveExp' %in% names(object) & 'DEGs' %in% names(object) ){
+    #
+    message( 'The differentially expressed genes (DEGs) and aveExp have already been identified and will be used directly in the downstream analyses without re-evaluation.'  )
+    mymarkers <- object$DEGs
+    aveExp <- object$aveExp
+  }else{
+    #get markers
+    mymarkers <- FindAllMarkers(object = object,logfc.threshold = 0, return.thresh = 2,
+                                min.pct = 0, only.pos = F , min.cells.feature = 0,
+                                min.cells.group = 0
+    )
+    #
+    suppressMessages(
+      aveExp <- AverageExpression( object, features =  as.character( rownames( object ) )  )
+    )
+  }
+
+  #gmt
+  mygmt <- clusterProfiler::read.gmt( gmt )
+  mygmt$term <- as.character( mygmt$term  )
 
   #run
   markers_used <- get_marker_used( gmt_data = mygmt ,
                                    marker_res = mymarkers ,
-                                   top = top
+                                   top = top,
+                                   aveExp = aveExp,
+                                   level1.threshold = level1.threshold
   )
 
   ######
-  return( markers_used )
+  return( list( markers =  markers_used , DEGs =  mymarkers , top = top , aveExp = aveExp , gmt = gmt  , level1.threshold = level1.threshold ) )
 }
 

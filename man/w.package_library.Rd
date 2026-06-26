@@ -4,7 +4,7 @@
 \alias{w.package_library}
 \title{Quietly load and check multiple R packages}
 \usage{
-w.package_library(...)
+w.package_library(..., quiet = T)
 }
 \arguments{
 \item{...}{Package names to load. Supports:
@@ -13,6 +13,8 @@ w.package_library(...)
 \item Character strings (e.g., \code{"dplyr"})
 \item Nested \code{c()} combinations (e.g., \code{c(dplyr, data.table)} or \code{c("dplyr", "data.table")})
 }}
+
+\item{quiet}{If TRUE, all messages and warnings will be suppressed when loading R packages.}
 }
 \value{
 A named invisible list with two elements:
@@ -26,6 +28,8 @@ Load and check multiple R packages quietly while suppressing messages and warnin
 The function supports flexible input formats, including unquoted package names,
 character strings, and nested \code{c()} calls. Packages are attached to the
 search path using \code{require()}.
+
+The function does not stop when some packages fail to load; it continues running and finally returns the names of both successfully loaded and failed packages.
 }
 \examples{
 temp <- w.package_library( c("data.table" , dplyr) , "ggplot2"  )

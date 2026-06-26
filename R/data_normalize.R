@@ -10,8 +10,7 @@
 #'
 
 w.data_normalize <- function( count_file , op.dir = '.' ){
-  library(scater)
-  library(stringr)
+  w.package_library( scater, stringr )
 
   ###start
   #input

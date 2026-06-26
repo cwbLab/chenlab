@@ -78,9 +78,8 @@ w.convert_id <- function( genes,ref,ip.type = NULL,op.type,
   w.package_install(  "AnnotationDbi",method = "B" )
   w.package_install(  "homologene",method = "B" )
   #
-  library(parallel)
-  library(data.table)
-  library(dplyr)
+  w.package_library( dplyr , parallel , data.table   )
+  
   #
   if( is.null( threads  ) ){  threads = max(1, parallel::detectCores() - 1)   }
   #
@@ -256,12 +255,13 @@ w.convert_id <- function( genes,ref,ip.type = NULL,op.type,
 #'
 #' @param exp Expression matrix.
 #' @param raw_row Original gene vector (usually the row names).
-#' @param convert_name onverted gene vector (corresponding to raw_row).
+#' @param convert_name The converted gene vector (corresponding to raw_row) may include NA, and any rows corresponding to NA entries will be excluded from the final converted dataset.
 #' @param type Method for retaining data. Options are 'max', 'min', 'sum', 'median', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned.
 #'
 #' @export
 w.mtx_unique_row <- function( exp, raw_row, convert_name, type = 'max' ){
-  library(data.table)
+
+  w.package_library(  data.table   )
 
   #
   if(length(raw_row) != nrow(exp) | length(convert_name) != nrow(exp)){

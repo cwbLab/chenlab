@@ -7,12 +7,15 @@
 #' character strings, and nested \code{c()} calls. Packages are attached to the
 #' search path using \code{require()}.
 #'
+#' The function does not stop when some packages fail to load; it continues running and finally returns the names of both successfully loaded and failed packages.
+#'
 #' @param ... Package names to load. Supports:
 #'   \itemize{
 #'     \item Unquoted package names (e.g., \code{dplyr})
 #'     \item Character strings (e.g., \code{"dplyr"})
 #'     \item Nested \code{c()} combinations (e.g., \code{c(dplyr, data.table)} or \code{c("dplyr", "data.table")})
 #'   }
+#' @param quiet If TRUE, all messages and warnings will be suppressed when loading R packages.
 #'
 #' @returns A named invisible list with two elements:
 #' \itemize{
@@ -25,7 +28,7 @@
 #'
 #' @export
 #'
-w.package_library <- function(...) {
+w.package_library <- function(..., quiet = T) {
 
   #
   pkgs <- substitute(list(...))[-1]
@@ -56,24 +59,41 @@ w.package_library <- function(...) {
   pkgs <- base::unique(as.character(pkgs))
 
   #
-  loaded <- base::vapply(
-    pkgs,
-    function(pkg) {
-
-      ok <- base::suppressWarnings(
-        base::suppressMessages(
-          require(
-            pkg,
-            character.only = TRUE,
-            quietly = TRUE
+  if( quiet ){
+    loaded <- base::vapply(
+      pkgs,
+      function(pkg){
+        #
+        ok <- base::suppressWarnings(
+          base::suppressMessages(
+            require(
+              pkg,
+              character.only = TRUE,
+              quietly = TRUE
+            )
           )
         )
-      )
-      #
-      return(ok)
-    },
-    logical(1)
-  )
+        #
+        return(ok)
+      },
+      logical(1)
+    )
+  }else{
+    loaded <- base::vapply(
+      pkgs,
+      function(pkg) {
+        #
+        ok <- require(
+              pkg,
+              character.only = TRUE,
+              quietly = TRUE
+            )
+        #
+        return(ok)
+      },
+      logical(1)
+    )
+  }
 
   #
   failure = pkgs[!loaded]

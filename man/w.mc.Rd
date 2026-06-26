@@ -4,7 +4,7 @@
 \alias{w.mc}
 \title{Multithreaded lapply}
 \usage{
-w.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T)
+w.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T, unlist = F)
 }
 \arguments{
 \item{X}{Same as the X parameter in \code{w.smc}.}
@@ -18,6 +18,8 @@ w.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T)
 \item{pb}{Show progress bar. Default is TRUE.}
 
 \item{time}{Display execution time. Default is TRUE.}
+
+\item{unlist}{Apply \code{base::unlist} to the final result. Default is FALSE.}
 }
 \description{
 A special use case of \code{w.smc}, where memory usage is not limited. By default, all available threads are used for computation.

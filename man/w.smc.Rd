@@ -12,7 +12,8 @@ w.smc(
   mem.ratio.max = 0.8,
   mem.max = NULL,
   pb = T,
-  time = T
+  time = T,
+  unlist = F
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ If an integer is provided, the program will force execution with the specified n
 \item{pb}{Show progress bar. Default is TRUE.}
 
 \item{time}{Display execution time. Default is TRUE.}
+
+\item{unlist}{Apply \code{base::unlist} to the final result. Default is FALSE.}
 }
 \value{
 Returns results consistent with \code{parallel::mclapply}.
