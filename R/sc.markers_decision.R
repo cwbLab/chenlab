@@ -22,28 +22,28 @@
 #'
 #' @examples
 #'
-#' marker1 <- w.sc.markers_decision( object = seurat.obj , gmt = 'test.gmt' , top = 20   )
+#' marker1 <- ww.sc.markers_decision( object = seurat.obj , gmt = 'test.gmt' , top = 20   )
 #' result1 <- marker1$markers
 #'
-#' marker2 <- w.sc.markers_decision( object =  marker1 , gmt = 'test.gmt' , top = 40   )
+#' marker2 <- ww.sc.markers_decision( object =  marker1 , gmt = 'test.gmt' , top = 40   )
 #' result2 <- marker2$markers
 #'
-#' marker3 <- w.sc.markers_decision( object =  marker2 , gmt = 'new.gmt' , top = 40   )
+#' marker3 <- ww.sc.markers_decision( object =  marker2 , gmt = 'new.gmt' , top = 40   )
 #' result3 <- marker3$markers
 #'
 #' #result4 produces the same results as result3.
-#' marker4 <- w.sc.markers_decision( object =  seurat.obj , gmt = 'new.gmt' , top = 40   )
+#' marker4 <- ww.sc.markers_decision( object =  seurat.obj , gmt = 'new.gmt' , top = 40   )
 #' result4 <- marker4$markers
 #'
 #' @export
 #'
-w.sc.markers_decision <- function( object , gmt , top = 20 , level1.threshold = 'avg_log2FC > 0.3 & p_val_adj < 0.05 & pct.1 > 0.3' ){
+ww.sc.markers_decision <- function( object , gmt , top = 20 , level1.threshold = 'avg_log2FC > 0.3 & p_val_adj < 0.05 & pct.1 > 0.3' ){
 
   #
-  w.package_install( "Seurat" , method = "I"  )
+  ww.package_install( "Seurat" , method = "I"  )
 
   #
-  w.package_library( dplyr , clusterProfiler ,  Seurat ,  data.table   )
+  ww.package_library( dplyr , clusterProfiler ,  Seurat ,  data.table   )
 
   ######
   get_marker_used <- function( gmt_data, marker_res , top , aveExp , level1.threshold = level1.threshold ){
@@ -53,7 +53,7 @@ w.sc.markers_decision <- function( object , gmt , top = 20 , level1.threshold = 
     marker_res$cluster <- as.character( marker_res$cluster )
 
     #1
-    marker_res$marker_y <- w.smc( 1:nrow( marker_res  ), function(x){
+    marker_res$marker_y <- ww.smc( 1:nrow( marker_res  ), function(x){
       c = marker_res$cluster[x] ; g = marker_res$gene[x]
       #
       my = 'N'

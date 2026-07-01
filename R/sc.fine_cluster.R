@@ -27,7 +27,7 @@
 #' p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 #'
 #' ### rename
-#' fine.res <- w.sc.fine_cluster( seurat.obj )
+#' fine.res <- ww.sc.fine_cluster( seurat.obj )
 #'
 #' #1
 #' seurat.obj$new.cluster <- fine.res[['final_cluster']]
@@ -44,11 +44,11 @@
 #' ### plot
 #' ( p1 | p2 ) + patchwork::plot_annotation( tag_levels = list(c('raw', 'fine'), '1') )
 #'
-w.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 , plot = T ){
-  w.package_install( "Seurat" , method = "I"  )
+ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 , plot = T ){
+  ww.package_install( "Seurat" , method = "I"  )
 
   #
-  w.package_library( dplyr , patchwork ,  Seurat ,  data.table   )
+  ww.package_library( dplyr , patchwork ,  Seurat ,  data.table   )
 
   #
   seurat.obj <- object

@@ -27,13 +27,13 @@
 #' @export
 #'
 #'
-w.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
+ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
   #
-  w.package_install( "Seurat" , method = "I"  )
+  ww.package_install( "Seurat" , method = "I"  )
 
   ###load required packages
-  w.package_library( dplyr , GSEABase , stringr , Seurat ,  data.table   )
-  
+  ww.package_library( dplyr , GSEABase , stringr , Seurat ,  data.table   )
+
   mysc <- object
   mygmt <- gmt
 
@@ -72,7 +72,7 @@ w.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T ,
       #estimate not 0 cell proportion and abundance of markers for each cluster
       split_data <- SplitObject(seurat_class)
       split_res <- lapply(split_data, function(x){ as.data.frame( GetAssayData( x, layer = 'data' ) )})
-      new_res <- w.smc(1:nrow(ult_res),function(x){
+      new_res <- ww.smc(1:nrow(ult_res),function(x){
         x = ult_res[x,] %>% unlist() %>% as.character()
         genes <- str_split(x[[2]],';')[[1]]
         proportin_res <- lapply(genes, function(y){

@@ -9,8 +9,8 @@
 #' @export
 #'
 
-w.data_normalize <- function( count_file , op.dir = '.' ){
-  w.package_library( scater, stringr )
+ww.data_normalize <- function( count_file , op.dir = '.' ){
+  ww.package_library( scater, stringr )
 
   ###start
   #input
@@ -27,7 +27,7 @@ w.data_normalize <- function( count_file , op.dir = '.' ){
 				  file = paste( op.dir,'gene_information_by_featurecounts.txt',sep='/' ),
 				  sep = '\t',quote = F,row.names = F)
   }
-  
+
   #calculate
   lengths <- as.integer(raw_data$Length)
   count <- as.data.frame(apply(raw_data[,-c(1:5)],2,as.integer))
@@ -42,17 +42,17 @@ w.data_normalize <- function( count_file , op.dir = '.' ){
   for ( i in names(sce@assays@data)){
     data <- as.data.frame(assay(sce,i))
     colnames(data) <- raw_title
-	
+
 	if( is.character(op.dir) ){
 		write.table( cbind( Genes = rownames(data)  , data),
 					file =  paste( op.dir  ,paste0(i,'.chenlab_output.txt') ,sep='/' ),
 					sep = '\t',quote = F,row.names = F)
 	}
-	
+
 	op[[i]] <- data
   }
   return(op)
-  
+
   print('Mission Finished')
   ###end
 }

@@ -8,7 +8,7 @@
 #' The returned value is designed to be used with the `message` or `cat` function.
 #'
 #' @export
-w.log_time_title <- function(  format = 1  ){
+ww.log_time_title <- function(  format = 1  ){
   time <- crayon::bold$cyan(  paste0( '[', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '] ' )  )
   if ( format == 1  ){
     #bold&cyan
@@ -38,7 +38,7 @@ w.log_time_title <- function(  format = 1  ){
 #' A character string with ANSI color codes applied, suitable for printing via `message` function.
 #'
 #' @export
-w.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green'   ){
+ww.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green'   ){
   #
   if( !is.null(text) ){
     mytext <- text
@@ -63,7 +63,7 @@ w.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green'   ){
 #' The returned value is designed to be used with the message function.
 #'
 #' @export
-w.log_time_runtime <- function(  t.minor , t.major , prefix = 'Runtime: '   ){
+ww.log_time_runtime <- function(  t.minor , t.major , prefix = 'Runtime: '   ){
   time_diff <- hms::as_hms( as.numeric( t.major - t.minor, units = "secs") )
   op <- paste0( prefix , time_diff , '.' )
   #

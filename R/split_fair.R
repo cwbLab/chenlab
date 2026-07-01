@@ -13,7 +13,7 @@
 #'
 #'
 #' @export
-w.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 ){
+ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 ){
   n <- length(x)
 
   # 1. chunk / number

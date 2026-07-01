@@ -1,12 +1,12 @@
 
-#' w.qsave
+#' ww.qsave
 #'
 #' @description
 #' Wraps the `save` function across different versions of the `qs` package to enable fast serialization of either the entire R environment or a set of specified objects to a local file, with significantly improved performance compared to the base R functions `save`, `save.image` and `saveRDS`.
 #'
 #' @param filename The file name/path. The file name does not affect the behavior of the function.
 #'
-#' We recommend using the `.qrds` extension when saving a single object, and `.qdata` for all other cases. The suffix has no strict meaning and is only intended to help users choose the appropriate loading method with `w.qread`.
+#' We recommend using the `.qrds` extension when saving a single object, and `.qdata` for all other cases. The suffix has no strict meaning and is only intended to help users choose the appropriate loading method with `ww.qread`.
 #' @param ... By default, all objects in the R environment are saved. Alternatively, users can specify multiple objects, in which case only the selected objects will be saved to the local file.
 #' @param envir The environment in which the objects are located.
 #' @param version Version of the serialization package to use. Integer value:
@@ -29,31 +29,31 @@
 #' x3 <- data.frame(int = sample(1e5, replace=TRUE), num = rnorm(1e5) )
 #'
 #' #1. entire R environment
-#' w.qsave( 'entire_R_environment.qdata' )
-#' # w.qread( 'entire_R_environment.qdata' )
+#' ww.qsave( 'entire_R_environment.qdata' )
+#' # ww.qread( 'entire_R_environment.qdata' )
 #'
 #' #2. x1 and x2
-#' w.qsave( 'x1_x2.qdata' , x1, x2 )
-#' # w.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
-#' # x1_x2_list <- w.qread( 'x1_x2.qdata' , return = T )    #return a list object
+#' ww.qsave( 'x1_x2.qdata' , x1, x2 )
+#' # ww.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
+#' # x1_x2_list <- ww.qread( 'x1_x2.qdata' , return = T )    #return a list object
 #'
 #' #3. x1
-#' w.qsave(  'x1.qrds' , x1 )
-#' # w.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
-#' # x1.copy <- w.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
+#' ww.qsave(  'x1.qrds' , x1 )
+#' # ww.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
+#' # x1.copy <- ww.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
 #'
 #' @export
 #'
 #'
-w.qsave <- function(filename, ... , envir = base::parent.frame(),
+ww.qsave <- function(filename, ... , envir = base::parent.frame(),
                      version = 2,
                      compress_level = qs2::qopt( "compress_level" ),
                      nthreads = 1,
                      shuffle = qs2::qopt("shuffle")
 ){
   #
-  message( w.log_time_title() , w.log_text_coloured( s.c = 's' ),
-           "Path to file: " , filename , '.'
+  message( ww.log_time_title() , ww.log_text_coloured( s.c = 's' ),
+           "Saving to file: " , filename , '.'
            )
   #
   threads <- nthreads
@@ -63,7 +63,7 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
 
   ##########qs
   if ( version == 1  ){
-    w.package_install( "qs" , method = 'remotes::install_cran("qs", type = "source", configure.args = "--with-simd=AVX2")' )
+    ww.package_install( "qs" , method = 'remotes::install_cran("qs", type = "source", configure.args = "--with-simd=AVX2")' )
 
     # Q1
     if (length(dots) == 0) {
@@ -76,8 +76,8 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
                  compress_level = compress_level ,
                  nthreads = threads )
 
-      message(w.log_time_title() , "Saved entire environment: ", length(obj_names), " objects → ",
-              w.log_text_coloured(  text = filename , color = 'red'   ) , '.'
+      message(ww.log_time_title() , "Saved entire environment: ", length(obj_names), " objects → ",
+              ww.log_text_coloured(  text = filename , color = 'red'   ) , '.'
               )
 
     } else {
@@ -90,8 +90,8 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
                   compress_level = compress_level ,
                   nthreads = threads )
 
-      message(w.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ",
-              w.log_text_coloured(  text = filename , color = 'red'   ), '.'
+      message(ww.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ",
+              ww.log_text_coloured(  text = filename , color = 'red'   ), '.'
               )
     }
   }
@@ -99,7 +99,7 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
 
   ##########qs2
   if ( version == 2  ){
-    w.package_install( "qs2" )
+    ww.package_install( "qs2" )
 
     # Q1
     if (length(dots) == 0) {
@@ -112,8 +112,8 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
                    shuffle = shuffle ,
                    nthreads = threads )
 
-      message(w.log_time_title() , "Saved entire environment: ", length(obj_names), " objects → ",
-              w.log_text_coloured(  text = filename , color = 'red'   ) , '.'   )
+      message(ww.log_time_title() , "Saved entire environment: ", length(obj_names), " objects → ",
+              ww.log_text_coloured(  text = filename , color = 'red'   ) , '.'   )
 
     } else {
       # Q2
@@ -125,8 +125,8 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
                    shuffle = shuffle ,
                    nthreads = threads )
 
-      message(w.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ",
-              w.log_text_coloured(  text = filename , color = 'red'   ) , '.'
+      message(ww.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ",
+              ww.log_text_coloured(  text = filename , color = 'red'   ) , '.'
               )
     }
   }
@@ -142,11 +142,11 @@ w.qsave <- function(filename, ... , envir = base::parent.frame(),
 #base function
 w_qsRead <- function(filename , version ,  threads ){
   if( version == 1 ){
-    w.package_install( "qs" , method = 'remotes::install_cran("qs", type = "source", configure.args = "--with-simd=AVX2")' )
+    ww.package_install( "qs" , method = 'remotes::install_cran("qs", type = "source", configure.args = "--with-simd=AVX2")' )
     w_qload_obj_list <- qs::qread( file = filename ,  nthreads =  threads)
   }
   if( version == 2 ){
-    w.package_install( "qs2" )
+    ww.package_install( "qs2" )
     w_qload_obj_list <- qs2::qs_read( file = filename,  nthreads =  threads)
   }
   return( w_qload_obj_list  )
@@ -167,10 +167,10 @@ w_baseRead <- function(filename , version  ){
 }
 
 
-#' w.qread
+#' ww.qread
 #'
 #' @description
-#' Loads objects saved via `w.qsave` into the R environment.
+#' Loads objects saved via `ww.qsave` into the R environment.
 #'
 #' It first attempts to read the object using all available versions of the `qs` package. If none succeed, it will automatically fall back to `base::load` and `base::readRDS` to ensure backward compatibility and robust loading.
 #'
@@ -200,32 +200,32 @@ w_baseRead <- function(filename , version  ){
 #' x3 <- data.frame(int = sample(1e5, replace=TRUE), num = rnorm(1e5) )
 #'
 #' #1. entire R environment
-#' w.qsave( 'entire_R_environment.qdata' )
-#' # w.qread( 'entire_R_environment.qdata' )
+#' ww.qsave( 'entire_R_environment.qdata' )
+#' # ww.qread( 'entire_R_environment.qdata' )
 #'
 #' #2. x1 and x2
-#' w.qsave( 'x1_x2.qdata' , x1, x2 )
-#' # w.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
-#' # x1_x2_list <- w.qread( 'x1_x2.qdata' , return = T )    #return a list object
+#' ww.qsave( 'x1_x2.qdata' , x1, x2 )
+#' # ww.qread( 'x1_x2.qdata' )    #load x1 and x2 into the R environment
+#' # x1_x2_list <- ww.qread( 'x1_x2.qdata' , return = T )    #return a list object
 #'
 #' #3. x1
-#' w.qsave(  'x1.qrds' , x1 )
-#' # w.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
-#' # x1.copy <- w.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
+#' ww.qsave(  'x1.qrds' , x1 )
+#' # ww.qread( 'x1.qrds' , return = F )    #load x1 into the R environment
+#' # x1.copy <- ww.qread( 'x1.qrds' , return = T )    #assign x1 to a new R object (x1.copy).
 #'
 #' #4. base::save
 #' base::save( x1 , x2 , file = 'x1_x2.data'  )
-#' # w.qread( 'x1_x2.data' )    #load x1 and x2 into the R environment
-#' # x1_x2_list <- w.qread( 'x1_x2.data' , return = T )    #return a list object
+#' # ww.qread( 'x1_x2.data' )    #load x1 and x2 into the R environment
+#' # x1_x2_list <- ww.qread( 'x1_x2.data' , return = T )    #return a list object
 #'
 #' #5. base::saveRDS
 #' base::saveRDS( x1 , file = 'x1.rds'  )
-#' # w.qread( 'x1.rds' , return = F )    #load x1 into the R environment
-#' # x1.copy <- w.qread( 'x1.rds' , return = T )    #assign x1 to a new R object (x1.copy).
+#' # ww.qread( 'x1.rds' , return = F )    #load x1 into the R environment
+#' # x1.copy <- ww.qread( 'x1.rds' , return = T )    #assign x1 to a new R object (x1.copy).
 #'
 #' @export
 #'
-w.qread <- function( filename , return = FALSE ,
+ww.qread <- function( filename , return = FALSE ,
                      envir = base::parent.frame() ,
                      version = 2,
                      delete = FALSE , nthreads = 1
@@ -236,8 +236,8 @@ w.qread <- function( filename , return = FALSE ,
   }
 
   #
-  message( w.log_time_title() , w.log_text_coloured( s.c = 's' ),
-           "Path to file: " , filename , '.' )
+  message( ww.log_time_title() , ww.log_text_coloured( s.c = 's' ),
+           "Reading from file: " , filename , '.' )
   #
   threads <- nthreads
   version <- as.integer( version )
@@ -308,10 +308,10 @@ w.qread <- function( filename , return = FALSE ,
 
   #
   if( !myerror ){
-    message(w.log_time_title() , "Method used: ",
-            w.log_text_coloured(  text = pkgName , color = 'blue' ),
+    message(ww.log_time_title() , "Method used: ",
+            ww.log_text_coloured(  text = pkgName , color = 'blue' ),
             ". Loaded ", length(w_qload_obj_list), " objects from ",
-            w.log_text_coloured(  text = filename , color = 'red'   ), '.'
+            ww.log_text_coloured(  text = filename , color = 'red'   ), '.'
             )
 
     #

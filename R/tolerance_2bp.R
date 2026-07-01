@@ -12,9 +12,9 @@
 #'
 #' @export
 #'
-w.tolerance_merge <- function( data , tolerance = 2  ){
+ww.tolerance_merge <- function( data , tolerance = 2  ){
   #
-  w.package_library(  data.table   )
+  ww.package_library(  data.table   )
   dt <- data.table::as.data.table(data)
   colnames( dt ) <- c( 'chr' , 'start' , 'end' , 'strand'   )
 

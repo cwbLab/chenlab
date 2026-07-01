@@ -8,7 +8,7 @@
 #' @param continuous Whether to return a continuous color scale
 
 #' @export
-w.group_colors <- function( number , continuous = F ){
+ww.group_colors <- function( number , continuous = F ){
   #
   group_color <- c(
     "#FF3B30", "#007AFF", "#CC00CC", "#00CCFF", "#FDB9A0",
@@ -77,13 +77,13 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   if ( Sys.getenv("RSTUDIO") == "1" ){
     #
     if ( model == 'F1'  ){
-      w.package_install( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
+      ww.package_install( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
 
       p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
       print(p.view)
     }
     if ( model == 'F2'  ){
-      w.package_install( "magick" ,method = "I"   )
+      ww.package_install( "magick" ,method = "I"   )
 
       panel_size <- grDevices::dev.size( "px" )
       raw.image <- magick::image_read(  filename  )
@@ -99,8 +99,8 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   }
 
   #
-  message( w.log_time_title(), "Saved to local: ",
-           w.log_text_coloured( text =  filename , color = 'red' ), '.'  )
+  message( ww.log_time_title(), "Saved to local: ",
+           ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
   #
 }
 
@@ -130,7 +130,7 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
 #'
 #' @export
 #'
-w.ggop <- function( plot, pre = NULL, sur = '.png' ,
+ww.ggop <- function( plot, pre = NULL, sur = '.png' ,
                      file = NULL , res = 600 , h = 5 , w = 5 , mode = 'F1'  ){
   #
   my.ggplot.op( plot = plot, pre = pre, sur = sur ,

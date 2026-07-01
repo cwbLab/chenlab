@@ -10,9 +10,9 @@
 #' A ggplot2 object.
 #'
 #' @export
-w.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
+ww.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
                                  name.size = 10){
-  w.package_install( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
+  ww.package_install( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
   #
   library(data.table)
   library(ggplot2)
@@ -36,7 +36,7 @@ w.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w
   }
 
   #
-  pdata <- w.smc(1:length(split_groups), function(x) {
+  pdata <- ww.smc(1:length(split_groups), function(x) {
     g = paste0("group", x)
     v = lapply(split_groups[[x]], function(y) {
       detect <- tryCatch({
@@ -68,7 +68,7 @@ w.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w
 
   #
   pdata <- data.frame(rbindlist(pdata))
-  ps <- w.smc(unique(pdata$group), function(x) {
+  ps <- ww.smc(unique(pdata$group), function(x) {
     sdata <- pdata[pdata$group == x, ]
     p <- ggplot(sdata, aes(x = height, y = name, fill = color)) +
       geom_tile(  ) + scale_fill_identity() +
@@ -109,12 +109,12 @@ w.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w
 #'
 #' @export
 #'
-w.palette_view <- function( palette_names = NULL , ncolor = 5 , colors = NULL , cat = F   ){
+ww.palette_view <- function( palette_names = NULL , ncolor = 5 , colors = NULL , cat = F   ){
 
   #
   if( !is.null( palette_names ) ){
 
-    w.package_install( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
+    ww.package_install( "SCP" , method = "devtools::install_github('zhanghao-njmu/SCP')"  )
 
     scp_colors <- SCP::palette_scp( palette = palette_names , n = 100 )
     #
@@ -128,7 +128,7 @@ w.palette_view <- function( palette_names = NULL , ncolor = 5 , colors = NULL , 
   if ( cat ){
     for (col in color) {
       #
-      w.package_install( "crayon" , method = "I"  )
+      ww.package_install( "crayon" , method = "I"  )
       suppressMessages( library( crayon  ) )
       #
       col_func <- crayon::make_style( col )
