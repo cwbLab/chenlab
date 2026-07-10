@@ -9,16 +9,18 @@
 #'
 #' @export
 ww.log_time_title <- function(  format = 1  ){
-  time <- crayon::bold$cyan(  paste0( '[', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '] ' )  )
+
+  text <- paste0( '[', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '] ' )
+  #
   if ( format == 1  ){
     #bold&cyan
-    time = time
+    time <- crayon::bold$cyan( text  )
   }else if ( format == 2  ){
     #bold
-    time <- crayon::bold(  paste0( '[', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '] ' )  )
+    time <- crayon::bold(  text  )
   }else if ( format == 3  ){
     #regular
-    time =  paste0( '[', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '] ' )
+    time <- text
   }
   #
   return( time )
@@ -28,28 +30,38 @@ ww.log_time_title <- function(  format = 1  ){
 #' Color of message
 #'
 #' @description
-#' Control the color of messages displayed via `message` function.
+#' Control the color of messages displayed via `message` or `cat` function.
 #'
-#' @param s.c Character flag indicating the log status. Use `"s"` for "Started" and `"c"` for "Completed". Ignored when `text` is not NULL.
-#' @param text Optional character string specifying the custom message to print.
-#' @param color Character string specifying the text color supported by the \pkg{crayon} package (e.g. `"green"`, `"red"`, `"yellow"`).
+#' @param s.c Character flag indicating the log status. Use `"s"` for "Started" and `"c"` for "Completed".
+#' @param text Optional character string specifying the custom message to print. If provided, the s.c parameter is ignored.
+#' @param color The text color supported by the [crayon::make_style] (e.g. `"red"`, `"#00BFFF"`).
+#' @param color.bg The text background color supported by the [crayon::make_style] (e.g. `"red"`, `"#00BFFF"`).
 #'
 #' @returns
-#' A character string with ANSI color codes applied, suitable for printing via `message` function.
+#' A character string with ANSI color codes applied, suitable for printing via `message` or `cat` function.
 #'
 #' @export
-ww.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green'   ){
+ww.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green' , color.bg = NULL   ){
   #
-  if( !is.null(text) ){
-    mytext <- text
-  }else{
-    if( s.c == 's' ){ mytext = 'Started. '}else if(  s.c == 'c' ){ mytext = 'Completed. '   }
+  ww.package_library( crayon )
+  #
+  if( is.null(text) ){
+    if( s.c == 's' ){ text = 'Started. '}else if(  s.c == 'c' ){ text = 'Completed. ' }
+  }
+
+  #forecolor
+  if(  !is.null( color  )  ){
+    mfcolor <- crayon::make_style( color , bg = F  )
+    text <- mfcolor(text)
+  }
+
+  #background color
+  if(  !is.null( color.bg  )  ){
+    mbcolor <- crayon::make_style( color.bg , bg = T  )
+    text <- mbcolor(text)
   }
   #
-  cmd <- paste0( "crayon::" , color ,'("', mytext , '")'   )
-  op <- eval(parse(text = cmd))
-  #
-  return( op )
+  return( text )
 }
 
 

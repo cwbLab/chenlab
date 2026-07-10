@@ -4,18 +4,20 @@
 \alias{ww.log_text_coloured}
 \title{Color of message}
 \usage{
-ww.log_text_coloured(s.c = "s", text = NULL, color = "green")
+ww.log_text_coloured(s.c = "s", text = NULL, color = "green", color.bg = NULL)
 }
 \arguments{
-\item{s.c}{Character flag indicating the log status. Use \code{"s"} for "Started" and \code{"c"} for "Completed". Ignored when \code{text} is not NULL.}
+\item{s.c}{Character flag indicating the log status. Use \code{"s"} for "Started" and \code{"c"} for "Completed".}
 
-\item{text}{Optional character string specifying the custom message to print.}
+\item{text}{Optional character string specifying the custom message to print. If provided, the s.c parameter is ignored.}
 
-\item{color}{Character string specifying the text color supported by the \pkg{crayon} package (e.g. \code{"green"}, \code{"red"}, \code{"yellow"}).}
+\item{color}{The text color supported by the \link[crayon:make_style]{crayon::make_style} (e.g. \code{"red"}, \code{"#00BFFF"}).}
+
+\item{color.bg}{The text background color supported by the \link[crayon:make_style]{crayon::make_style} (e.g. \code{"red"}, \code{"#00BFFF"}).}
 }
 \value{
-A character string with ANSI color codes applied, suitable for printing via \code{message} function.
+A character string with ANSI color codes applied, suitable for printing via \code{message} or \code{cat} function.
 }
 \description{
-Control the color of messages displayed via \code{message} function.
+Control the color of messages displayed via \code{message} or \code{cat} function.
 }

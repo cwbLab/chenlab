@@ -7,11 +7,11 @@
 ww.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T, unlist = F)
 }
 \arguments{
-\item{X}{Same as the X parameter in \code{ww.smc}.}
+\item{X}{Same as the X parameter in \link{ww.smc}.}
 
-\item{FUN}{Same as the FUN parameter in \code{ww.smc}.}
+\item{FUN}{Same as the FUN parameter in \link{ww.smc}.}
 
-\item{...}{Same as \code{ww.smc}.}
+\item{...}{Same as \link{ww.smc}.}
 
 \item{mc.cores}{Number of cores used for parallel computation. By default, the maximum computing resources are used.}
 
@@ -19,7 +19,7 @@ ww.mc(X, FUN, ..., mc.cores = NULL, pb = T, time = T, unlist = F)
 
 \item{time}{Display execution time. Default is TRUE.}
 
-\item{unlist}{Apply \code{base::unlist} to the final result. Default is FALSE.}
+\item{unlist}{Apply \link[base:unlist]{base::unlist} to the final result. Default is FALSE.}
 }
 \description{
 A special use case of \code{ww.smc}, where memory usage is not limited. By default, all available threads are used for computation.

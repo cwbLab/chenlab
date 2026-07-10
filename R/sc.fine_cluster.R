@@ -136,7 +136,9 @@ ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
   names(new.cluster) <- trans_res$raw_cluster
   seurat.obj <- RenameIdents( seurat.obj, new.cluster )
   suppressMessages(
-    p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = reduction  )
+    p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = reduction  ,
+                            cols =  Seurat::DiscretePalette( length( levels( seurat.obj ) ) + 1, palette = 'parade', shuffle = T)
+                            )
   )
   new_cluster <- as.integer( Idents( seurat.obj ) )
   new_cluster <- factor(  new_cluster , levels = min(  new_cluster ) : max( new_cluster )    )

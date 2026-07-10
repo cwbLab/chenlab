@@ -7,19 +7,24 @@
 ww.qsave(
   filename,
   ...,
+  force = F,
   envir = base::parent.frame(),
   version = 2,
   compress_level = qs2::qopt("compress_level"),
-  nthreads = 1,
-  shuffle = qs2::qopt("shuffle")
+  shuffle = qs2::qopt("shuffle"),
+  nthreads = 1
 )
 }
 \arguments{
 \item{filename}{The file name/path. The file name does not affect the behavior of the function.
 
-We recommend using the \code{.qrds} extension when saving a single object, and \code{.qdata} for all other cases. The suffix has no strict meaning and is only intended to help users choose the appropriate loading method with \code{ww.qread}.}
+We recommend using the \code{.qrds} extension when saving a single object, and \code{.qdata} for all other cases. The suffix has no strict meaning and is only intended to help users choose the appropriate loading method with \link{ww.qread}.}
 
 \item{...}{By default, all objects in the R environment are saved. Alternatively, users can specify multiple objects, in which case only the selected objects will be saved to the local file.}
+
+\item{force}{Whether to force overwriting an existing file. Default is \code{FALSE}. If \code{filename} already exists, the file will not be overwritten and a message will be displayed.
+
+Set to \code{TRUE} to overwrite the existing file.}
 
 \item{envir}{The environment in which the objects are located.}
 
@@ -29,11 +34,11 @@ We recommend using the \code{.qrds} extension when saving a single object, and \
 \item 2: use the \code{qs2} package
 }}
 
-\item{compress_level}{As with \code{qs::qsave} or \code{qs2::qs_save}.}
+\item{compress_level}{As with \link[qs:qsave]{qs::qsave} or \link[qs2:qs_save]{qs2::qs_save}.}
 
-\item{nthreads}{As with \code{qs::qsave} or \code{qs2::qs_save}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
+\item{shuffle}{As with the \link[qs2:qs_save]{qs2::qs_save}.}
 
-\item{shuffle}{As with the \code{qs2::qs_save}.}
+\item{nthreads}{As with \link[qs:qsave]{qs::qsave} or \link[qs2:qs_save]{qs2::qs_save}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }
 \value{
 NULL.

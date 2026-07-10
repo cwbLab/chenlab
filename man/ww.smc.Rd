@@ -17,11 +17,11 @@ ww.smc(
 )
 }
 \arguments{
-\item{X}{Same as the X parameter in \code{parallel::mclapply}.}
+\item{X}{Same as the X parameter in \link[parallel:mcdummies]{parallel::mclapply}.}
 
-\item{FUN}{Same as the FUN parameter in \code{parallel::mclapply}.}
+\item{FUN}{Same as the FUN parameter in \link[parallel:mcdummies]{parallel::mclapply}.}
 
-\item{...}{Same as \code{parallel::mclapply}.}
+\item{...}{Same as \link[parallel:mcdummies]{parallel::mclapply}.}
 
 \item{mc.cores}{Maximum number of cores used for parallel computation. By default, the number of cores is automatically determined based on memory usage, ensuring that memory does not overflow while fully utilizing all available system resources.
 
@@ -35,7 +35,7 @@ If an integer is provided, the program will force execution with the specified n
 
 \item{time}{Display execution time. Default is TRUE.}
 
-\item{unlist}{Apply \code{base::unlist} to the final result. Default is FALSE.}
+\item{unlist}{Apply \link[base:unlist]{base::unlist} to the final result. Default is FALSE.}
 }
 \value{
 Returns results consistent with \code{parallel::mclapply}.

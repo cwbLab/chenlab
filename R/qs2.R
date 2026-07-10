@@ -6,19 +6,28 @@
 #'
 #' @param filename The file name/path. The file name does not affect the behavior of the function.
 #'
-#' We recommend using the `.qrds` extension when saving a single object, and `.qdata` for all other cases. The suffix has no strict meaning and is only intended to help users choose the appropriate loading method with `ww.qread`.
+#' We recommend using the `.qrds` extension when saving a single object, and `.qdata` for all other cases. The suffix has no strict meaning and is only intended to help users choose the appropriate loading method with [ww.qread].
+#'
 #' @param ... By default, all objects in the R environment are saved. Alternatively, users can specify multiple objects, in which case only the selected objects will be saved to the local file.
+#'
+#' @param force Whether to force overwriting an existing file. Default is `FALSE`. If `filename` already exists, the file will not be overwritten and a message will be displayed.
+#'
+#' Set to `TRUE` to overwrite the existing file.
+#'
 #' @param envir The environment in which the objects are located.
+#'
 #' @param version Version of the serialization package to use. Integer value:
 #' \itemize{
 #'   \item 1: use the `qs` package
 #'   \item 2: use the `qs2` package
 #' }
-#' @param compress_level As with `qs::qsave` or `qs2::qs_save`.
 #'
-#' @param nthreads As with `qs::qsave` or `qs2::qs_save`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
+#' @param compress_level As with [qs::qsave] or [qs2::qs_save].
+#' @param shuffle As with the [qs2::qs_save].
 #'
-#' @param shuffle As with the `qs2::qs_save`.
+#' @param nthreads As with [qs::qsave] or [qs2::qs_save], a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
+#'
+#'
 #'
 #' @returns
 #' NULL.
@@ -45,13 +54,33 @@
 #' @export
 #'
 #'
-ww.qsave <- function(filename, ... , envir = base::parent.frame(),
+ww.qsave <- function(filename, ... ,
+                     force = F,
+                     envir = base::parent.frame(),
                      version = 2,
                      compress_level = qs2::qopt( "compress_level" ),
-                     nthreads = 1,
-                     shuffle = qs2::qopt("shuffle")
+                     shuffle = qs2::qopt("shuffle"),
+                     nthreads = 1
 ){
-  #
+  ##########force
+  if( !force & base::file.exists( filename ) ){
+    if ( base::interactive() ){
+      choice <- utils::menu(c("Yes", "No"),
+                            title = ww.log_text_coloured( text = sprintf("⚠️ '%s' already exists. Do you want to overwrite it?",  filename  ) , color = 'yellow' )
+                            )
+      if( choice != 1  ){
+        message( ww.log_time_title() , 'Operation cancelled.'  )
+        return(base::invisible(NULL))
+      }
+      #
+    }else{
+      warning(
+        sprintf("⚠️ '%s' already exists and will not be overwritten. Set `force = TRUE` to overwrite it.",  filename  )
+      )
+    }
+  }
+
+  ##########
   message( ww.log_time_title() , ww.log_text_coloured( s.c = 's' ),
            "Saving to file: " , filename , '.'
            )
@@ -170,7 +199,7 @@ w_baseRead <- function(filename , version  ){
 #' ww.qread
 #'
 #' @description
-#' Loads objects saved via `ww.qsave` into the R environment.
+#' Loads objects saved via [ww.qsave] into the R environment.
 #'
 #' It first attempts to read the object using all available versions of the `qs` package. If none succeed, it will automatically fall back to `base::load` and `base::readRDS` to ensure backward compatibility and robust loading.
 #'
@@ -189,7 +218,7 @@ w_baseRead <- function(filename , version  ){
 #' No worries! If reading fails using the specified version, other version-specific functions will be automatically called to attempt loading the object.
 #'
 #' @param delete Whether to delete the local file after reading is completed. Default: FALSE.
-#' @param nthreads As with `qs::qread` or `qs2::qs_read`, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
+#' @param nthreads As with [qs::qread] or [qs2::qs_read], a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
 #'
 #' @returns
 #' NULL.

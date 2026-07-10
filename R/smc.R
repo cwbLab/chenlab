@@ -6,12 +6,12 @@
 #' A wrapper for `base::lapply` that displays a synchronized progress bar.
 #'
 #'
-#' @param X Same as `base::lapply`.
-#' @param FUN Same as `base::lapply`.
-#' @param ... Same as `base::lapply`.
+#' @param X Same as [base::lapply].
+#' @param FUN Same as [base::lapply].
+#' @param ... Same as [base::lapply].
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
-#' @param unlist Apply `base::unlist` to the final result. Default is FALSE.
+#' @param unlist Apply [base::unlist] to the final result. Default is FALSE.
 #'
 #' @returns
 #' Returns results consistent with `base::lapply`.
@@ -65,9 +65,9 @@ ww.pblapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
 #'
 #' Its core logic is to split the input vector into chunks for execution, thereby preventing memory overflow.
 #'
-#' @param X Same as the X parameter in `parallel::mclapply`.
-#' @param FUN Same as the FUN parameter in `parallel::mclapply`.
-#' @param ... Same as `parallel::mclapply`.
+#' @param X Same as the X parameter in [parallel::mclapply].
+#' @param FUN Same as the FUN parameter in [parallel::mclapply].
+#' @param ... Same as [parallel::mclapply].
 #' @param mc.cores Maximum number of cores used for parallel computation. By default, the number of cores is automatically determined based on memory usage, ensuring that memory does not overflow while fully utilizing all available system resources.
 #'
 #' If an integer is provided, the program will force execution with the specified number of threads, ignoring memory protection.
@@ -75,7 +75,7 @@ ww.pblapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
 #' @param mem.max Maximum amount of memory (in GB) allowed when automatically determining the number of cores. Defaults to NULL, which will automatically detect the maximum available system memory.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
-#' @param unlist Apply `base::unlist` to the final result. Default is FALSE.
+#' @param unlist Apply [base::unlist] to the final result. Default is FALSE.
 #'
 #' @return
 #' Returns results consistent with `parallel::mclapply`.
@@ -83,7 +83,7 @@ ww.pblapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
 #' @export
 #'
 ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max = NULL ,
-                  pb = T , time = T , unlist = F ){
+                    pb = T , time = T , unlist = F ){
   start_time <- Sys.time()
 
   #1
@@ -130,22 +130,22 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     mean_used <- c()
     for(  temp_idx  in  sample_idx  ){
       temp <- bench::bench_memory(
-            suppressMessages( suppressWarnings( capture.output(
-              test_results <- base::lapply(X = X[temp_idx], FUN = FUN, ...)
-            ) ) )
-          )[['mem_alloc']]
+        suppressMessages( suppressWarnings( capture.output(
+          test_results <- base::lapply(X = X[temp_idx], FUN = FUN, ...)
+        ) ) )
+      )[['mem_alloc']]
       temp <- max( as.numeric( temp ) / 1024^2 , 0.1 )
 
       mean_used <- c( mean_used , temp )
     }
 
     #minimum,0.5 MB
-    avg_mem_per_task_mb <- max( median( as.numeric( mean_used ) ), 0.4167 ) * 1.2
+    avg_mem_per_task_mb <- max( median( as.numeric( mean_used ) ) * 1.1  , 0.5 )
 
     #3
     get_total_mem_gb <- function(){
       res <- tryCatch({
-		    ps::ps_system_memory()[['avail']] / 1024^3
+        ps::ps_system_memory()[['avail']] / 1024^3
       }, error = function(e) NA )
       return(res)
     }
@@ -166,7 +166,7 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
       message( 'Unable to automatically determine available system memory. Users can explicitly set the memory limit via the mem.max parameter. Memory allowed: ',
                ww.log_text_coloured( text = round( total_mem_gb , digits = 3  ) , color = 'red' ),
                ' GB.'
-              )
+      )
     }
 
     limit_mem_gb <- total_mem_gb * mem.ratio.max
@@ -175,57 +175,78 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     max_safe_cores <- floor((limit_mem_gb / (avg_mem_per_task_mb / 1024)) * 0.9)
     max_safe_cores <- max(1, max_safe_cores)
 
-    chunk_size <- floor( max(2, min(length(X), max_safe_cores ) ) * 0.9 )
+    if ( max_safe_cores*0.9 > target_threads  ){
 
-    myratio <- chunk_size / target_threads
-    if( avg_mem_per_task_mb >= 100 & myratio < 100 ){
-      target_threads = floor( max( target_threads / 3,  target_threads / 100   ) )
-    }
+      target_threads <- min( target_threads  , length(X)  )
 
-    indices <- split(seq_along(X), ceiling(seq_along(X) / chunk_size))
+      if( time ){ message(
+        ww.log_time_title(),
+        ww.log_text_coloured( s.c = 's' ),
+        "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
+        "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
+        "; Threads used: ", ww.log_text_coloured( text = target_threads , color = 'red' ),'.'
+      )}
+      #
+      if(pb){
+        final_results <- pbmcapply::pbmclapply( X = X, FUN = FUN, ..., mc.cores = target_threads )
+      }else{
+        final_results <- parallel::mclapply( X = X, FUN = FUN, ..., mc.cores = target_threads )
+      }
+      #
 
-    #5
-    final_results <- vector("list", length(X))
-    total_chunks <- length(indices)
+    }else{
+      chunk_size <- floor( max(2, min(length(X), max_safe_cores ) ) * 0.9 )
 
-    current_cores <- min( target_threads, max_safe_cores  )
-    if( time ){ message(
-      ww.log_time_title(),
-      ww.log_text_coloured( s.c = 's' ),
-      "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
-      "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
-      "; Threads used: ", ww.log_text_coloured( text = current_cores , color = 'red' ),'.'
-    )}
-    #
-    progressr::with_progress({
-      a <- 1:total_chunks
-      mypb<- progressr::progressor(steps = length(a))
-
-      for (i in seq_along(indices)){
-        #
-        curr_idx <- indices[[i]]
-        #
-        batch_res <- parallel::mclapply(
-          X = X[curr_idx],
-          FUN = FUN,
-          ...,
-          mc.cores = current_cores
-        )
-        final_results[curr_idx] <- batch_res
-        #
-        mypb()
+      myratio <- chunk_size / target_threads
+      if( avg_mem_per_task_mb >= 100 & myratio < 100 ){
+        target_threads = floor( max( target_threads / 3,  target_threads / 100   ) )
       }
 
-    },
-    handlers = progressr::handlers(  progressr::handler_progress(
-      format = "[:bar] :percent | Elapsed: :elapsed | ETA: :eta",
-      clear = FALSE
-    )),
-    enable = pb
-    )
-    #
+      indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 2  )
+
+      #5
+      final_results <- vector("list", length(X))
+      total_chunks <- length(indices)
+
+      current_cores <- min( target_threads, max_safe_cores  )
+      if( time ){ message(
+        ww.log_time_title(),
+        ww.log_text_coloured( s.c = 's' ),
+        "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
+        "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
+        "; Threads used: ", ww.log_text_coloured( text = current_cores , color = 'red' ),'.'
+      )}
+      #
+      progressr::with_progress({
+        mypb<- progressr::progressor(steps = total_chunks )
+
+        for (i in seq_along(indices)){
+          #
+          curr_idx <- indices[[i]]
+          #
+          batch_res <- parallel::mclapply(
+            X = X[curr_idx],
+            FUN = FUN,
+            ...,
+            mc.cores = min( current_cores  , length(  X[curr_idx]   )  )
+          )
+          final_results[curr_idx] <- batch_res
+          #
+          mypb()
+        }
+
+      },
+      handlers = progressr::handlers(  progressr::handler_progress(
+        format = "[:bar] :percent | Elapsed: :elapsed | ETA: :eta",
+        clear = FALSE
+      )),
+      enable = pb
+      )
+      #
+    }
   }else{
-    threads <- max(1, threads)
+    threads <- max(1, as.integer( threads ) )
+    threads <- min( threads  , length(X) )
     #
     if( time ){ message(
       ww.log_time_title(),
@@ -235,9 +256,9 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     ) }
     #
     if(pb){
-      final_results <- pbmcapply::pbmclapply( X = X, FUN = FUN, ..., mc.cores = as.integer(threads)  )
+      final_results <- pbmcapply::pbmclapply( X = X, FUN = FUN, ..., mc.cores = threads  )
     }else{
-      final_results <- parallel::mclapply( X = X, FUN = FUN, ..., mc.cores = as.integer(threads)  )
+      final_results <- parallel::mclapply( X = X, FUN = FUN, ..., mc.cores = threads  )
     }
     #
   }
@@ -262,17 +283,18 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 #' @description
 #' A special use case of `ww.smc`, where memory usage is not limited. By default, all available threads are used for computation.
 #'
-#' @param X Same as the X parameter in `ww.smc`.
-#' @param FUN Same as the FUN parameter in `ww.smc`.
-#' @param ... Same as `ww.smc`.
+#' @param X Same as the X parameter in [ww.smc].
+#' @param FUN Same as the FUN parameter in [ww.smc].
+#' @param ... Same as [ww.smc].
 #' @param mc.cores Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #' @param pb Show progress bar. Default is TRUE.
 #' @param time Display execution time. Default is TRUE.
-#' @param unlist Apply `base::unlist` to the final result. Default is FALSE.
+#' @param unlist Apply [base::unlist] to the final result. Default is FALSE.
 #'
 #' @export
 ww.mc <- function( X, FUN, ..., mc.cores = NULL, pb = T ,time = T , unlist = F  ){
   if( is.null( mc.cores  ) ){  mc.cores = parallel::detectCores() - 1 }
+  mc.cores <- min( mc.cores , length(X) )
   mc.cores <- max(1, mc.cores)
   #
   res <- ww.smc(X, FUN, ..., mc.cores = mc.cores , mem.ratio.max = 0.8 , mem.max = NULL ,

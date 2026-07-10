@@ -52,7 +52,6 @@ ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 
   # 3. split_fair
   base_size <- floor(n / num_chunks)
 
-
   #
   extra <- n %% num_chunks
   chunk_lengths <- rep(base_size, num_chunks)
@@ -84,7 +83,9 @@ ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 
   if( m1 ){
     extra <- n %% num_chunks
     chunk_lengths <- rep(base_size, num_chunks)
-    chunk_lengths[ ( length( chunk_lengths ) - extra + 1 ) :  length( chunk_lengths )  ] <- chunk_lengths[ ( length( chunk_lengths ) - extra + 1 ) :  length( chunk_lengths )  ] + 1
+    if( extra > 0  ){
+      chunk_lengths[ ( length( chunk_lengths ) - extra + 1 ) : length( chunk_lengths )  ] <- chunk_lengths[ ( length( chunk_lengths ) - extra + 1 ) : length( chunk_lengths )  ] + 1
+    }
   }
 
   # 4.

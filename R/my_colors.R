@@ -50,88 +50,138 @@ ww.group_colors <- function( number , continuous = F ){
 
 #########################################################################################
 my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
-                     file = NULL , res = 600 , h = 5 , w = 5 , model = 'F1'  ){
+                     file = NULL , res = 600 , h = 5 , w = 5 , model = 'M1'  ){
 
   #
-  if ( is.null(file)  ){
-    filename = paste0( pre , sur  )
+  if(  is.character( plot  )  ){
+    filename = plot
+    model = 'M2'
+    message( ww.log_time_title(), "Previewing local file: ",
+             ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
+
   }else{
-    filename = file
-  }
-  #
-  suppressMessages(
-    if (  stringr::str_ends( filename , 'svg' )  | stringr::str_ends( filename , 'pdf' )   ){
-      ggpubr::ggexport( plot , filename = filename,
-                        height = h,
-                        width = w
-      )
-    }else{
-      ggpubr::ggexport( plot , filename = filename,
-                        res = res ,
-                        height = h * res ,
-                        width = w * res
-      )
-    }
-  )
-  #
-  if ( Sys.getenv("RSTUDIO") == "1" ){
     #
-    if ( model == 'F1'  ){
+    if ( is.null(file)  ){
+      filename = paste0( pre , sur  )
+    }else{
+      filename = file
+    }
+    #
+    suppressMessages(
+      if (  stringr::str_ends( filename , 'svg' )  | stringr::str_ends( filename , 'pdf' )   ){
+        ggpubr::ggexport( plot , filename = filename,
+                          height = h,
+                          width = w
+        )
+      }else{
+        ggpubr::ggexport( plot , filename = filename,
+                          res = res ,
+                          height = h * res ,
+                          width = w * res
+        )
+      }
+    )
+    #
+    message( ww.log_time_title(), "Saved to local: ",
+             ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
+  }
+
+  #
+  if ( base::interactive() ){
+    #
+    if ( model == 'M1'  ){
       ww.package_install( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
 
       p.view <- plot + ggview::canvas(   height = h , width =  w , dpi = res , bg = "white"  )
       print(p.view)
     }
-    if ( model == 'F2'  ){
-      ww.package_install( "magick" ,method = "I"   )
+    if ( model == 'M2'  ){
 
-      panel_size <- grDevices::dev.size( "px" )
-      raw.image <- magick::image_read(  filename  )
-      raw.image.scale <- magick::image_resize( raw.image,
-                                               paste0(  min( panel_size[1] / magick::image_info( raw.image )$width - 0.005,
-                                                             panel_size[2] / magick::image_info( raw.image )$height - 0.005 ) * 100, "%" )
+      ww.package_install( "magick" ,method = "I"   )
+      ww.package_install( "EBImage" ,method = "B" )
+
+      raw.image <-tryCatch({
+        png <- EBImage::readImage( filename )
+      },error = function(e){
+        NULL
+      }
       )
-      temp <- capture.output(  suppressMessages( print(raw.image.scale )  ) )
+
+      #
+      if(  is.null( raw.image ) ){
+        #
+        if(  grepl("\\.pdf$", filename , ignore.case = TRUE)   ){
+          ww.package_install( "pdftools" ,method = "I" )
+          filename <- pdftools::pdf_render_page(  filename , dpi = 600 ,  page = 1 )
+        }
+        raw.image <- magick::image_read(  filename )
+        raw.image <- magick::as_EBImage(  raw.image  )
+        #
+      }
+
+      print(EBImage::display( raw.image ))
+      #
     }
     #
   }else{
-    warning( "Image preview is only available in the RStudio GUI." )
+    warning( "Image preview is only available in the interactive GUI." )
   }
-
   #
-  message( ww.log_time_title(), "Saved to local: ",
-           ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
-  #
+  return( invisible( TRUE ) )
 }
 
 
 ###############################################################
-#' Previewing and saving ggplot2 objects
+#' Preview and save images
 #'
 #' @description
 #' This function wraps and extends `ggpubr::ggexport` to facilitate saving ggplot objects to local files. In addition, it provides a preview window for immediate visualization of exported images.
 #'
-#' @param plot ggplot2 object.
+#' It can also preview an existing local image by specifying its file path in an interactive GUI.
+#'
+#'
+#' @param plot A ggplot2 object or a file path. If a ggplot2 object is provided, it is saved to a local file and then previewed. If a file path is provided, the image is previewed directly.
 #' @param pre File name prefix.
-#' @param sur File name suffix, default is '.png'. Supported image formats are identical to those of `ggpubr::ggexport`.
+#' @param sur File name suffix, default is '.png'. Supported image formats are identical to those of [ggpubr::ggexport].
 #' @param file Full file name. If this parameter is provided, pre and sur will be ignored.
 #' @param res Dots per inch (DPI) resolution.
 #' @param h Height of the image (inch). For raster plots, the final image height is (h × res) pixels. For vector graphics, the final height is h inches.
 #' @param w Width of the image (inch). For raster plots, the final image width is (w × res) pixels. For vector graphics, the final width is w inches.
 #' @param mode There are two preview modes:
 #'
-#' (1) F1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
+#' (1) M1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
 #'
-#' (2) F2 shows the image that has already been saved locally, but zooming in and out is not supported.
+#' (2) M2 reloads the exported image from the local file and previews it.
 #'
 #' (3) If local image preview is not required, set this parameter to FALSE.
 #'
-#' By default, preview mode F1 is used.
+#'
+#' @examples
+#'
+#' ###
+#' library(ggpubr)
+#'
+#' data("ToothGrowth")
+#' df <- ToothGrowth
+#' df$dose <- as.factor(df$dose)
+#'
+#' ### ggplot object
+#' bxp <- ggboxplot(df, x = "dose", y = "len", color = "dose", palette = "jco")
+#'
+#' #
+#' ww.ggp( plot = bxp , pre = 'bxp'  )
+#' ww.ggp( plot = bxp , pre = 'bxp' , sur = '.pdf'  )
+#' ww.ggp( plot = bxp , file = 'bxp.tiff' )
+#'
+#' ###local file
+#' ww.ggp(  plot = 'bxp.tiff'  )
+#' #ww.ggp(  plot = 'bxp.pdf'  )
+#'
 #'
 #' @export
 #'
-ww.ggop <- function( plot, pre = NULL, sur = '.png' ,
-                     file = NULL , res = 600 , h = 5 , w = 5 , mode = 'F1'  ){
+ww.ggp <- function( plot, pre = NULL, sur = '.png' ,
+                     file = NULL , res = 600 , h = 5 , w = 5 , mode = 'M2'  ){
   #
   my.ggplot.op( plot = plot, pre = pre, sur = sur ,
                file = file , res = res , h = h , w = w , model = mode

@@ -32,13 +32,13 @@ No worries! If reading fails using the specified version, other version-specific
 
 \item{delete}{Whether to delete the local file after reading is completed. Default: FALSE.}
 
-\item{nthreads}{As with \code{qs::qread} or \code{qs2::qs_read}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
+\item{nthreads}{As with \link[qs:qread]{qs::qread} or \link[qs2:qs_read]{qs2::qs_read}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }
 \value{
 NULL.
 }
 \description{
-Loads objects saved via \code{ww.qsave} into the R environment.
+Loads objects saved via \link{ww.qsave} into the R environment.
 
 It first attempts to read the object using all available versions of the \code{qs} package. If none succeed, it will automatically fall back to \code{base::load} and \code{base::readRDS} to ensure backward compatibility and robust loading.
 }

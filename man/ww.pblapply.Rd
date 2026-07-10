@@ -7,17 +7,17 @@
 ww.pblapply(X, FUN, ..., pb = T, time = T, unlist = F)
 }
 \arguments{
-\item{X}{Same as \code{base::lapply}.}
+\item{X}{Same as \link[base:lapply]{base::lapply}.}
 
-\item{FUN}{Same as \code{base::lapply}.}
+\item{FUN}{Same as \link[base:lapply]{base::lapply}.}
 
-\item{...}{Same as \code{base::lapply}.}
+\item{...}{Same as \link[base:lapply]{base::lapply}.}
 
 \item{pb}{Show progress bar. Default is TRUE.}
 
 \item{time}{Display execution time. Default is TRUE.}
 
-\item{unlist}{Apply \code{base::unlist} to the final result. Default is FALSE.}
+\item{unlist}{Apply \link[base:unlist]{base::unlist} to the final result. Default is FALSE.}
 }
 \value{
 Returns results consistent with \code{base::lapply}.

@@ -48,7 +48,9 @@ ww.package_install <- function( package.name, method = 'I', interactive.install 
   #
   to_install <- TRUE
   if( interactive.install & base::interactive() ){
-    choice <- utils::menu(c("Yes", "No"), title = sprintf("⚠️ Do you want to install '%s' using recommended way?", package.name))
+    choice <- utils::menu(c("Yes", "No"),
+                          title = ww.log_text_coloured( text = sprintf("⚠️ Do you want to install '%s' using recommended way?", package.name), color = 'yellow' )
+                          )
     to_install <- ( choice == 1 )
   }
   if(to_install){
