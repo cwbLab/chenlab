@@ -42,7 +42,7 @@ The value of \code{min.cluster} cannot be smaller than \code{min.target}!!!}
 
 \item{min.cluster.reserved}{Whether to retain clusters containing fewer cells than min.cluster. When TRUE, the original expression values of these clusters are retained rather than the metacell values. Clusters with only 1 cell are always excluded.}
 
-\item{min.target}{The expected number of cells for the smallest cluster after metacell generation. This value is used to calculate the scaling factor. If the smallest cluster contains an actual number of N cells, the scaling factor is calculated as N / min.target. All other clusters are scaled according to this factor. Recommendation: 50.}
+\item{min.target}{The expected number of cells for the smallest cluster after metacell generation. This value is used to calculate the scaling factor. If the smallest cluster contains an actual number of N cells, the scaling factor is calculated as N / min.target. All other clusters are scaled according to this factor.}
 
 \item{max.target}{Available only when method = "mine". This parameter defines the maximum number of cells in the largest cluster after proportional scaling. Clusters larger than this limit will no longer be scaled proportionally.}
 }
