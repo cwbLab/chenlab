@@ -35,7 +35,10 @@ No worries! If reading fails using the specified version, other version-specific
 \item{nthreads}{As with \link[qs:qread]{qs::qread} or \link[qs2:qs_read]{qs2::qs_read}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }
 \value{
-NULL.
+\itemize{
+\item When return is F, the value of the filename parameter is returned after successful loading.
+\item When return is T, the value of the variable is returned.
+}
 }
 \description{
 Loads objects saved via \link{ww.qsave} into the R environment.

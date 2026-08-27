@@ -63,10 +63,10 @@ ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
   group_unique <- unique( group )
 
   #downsample
-  set.seed(seed)
   group_mat <- lapply( group_unique , function(x , max_n = downsample  ){
     sd <- df[ group == x , ]
     if( nrow(sd)  > max_n ){
+      set.seed(seed)
       sd <- sd[  sample( 1:nrow(sd) , max_n , replace = F ) ,]
     }
     return( as.matrix(sd))
@@ -136,7 +136,7 @@ ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
   names(new.cluster) <- trans_res$raw_cluster
   seurat.obj <- RenameIdents( seurat.obj, new.cluster )
   suppressMessages(
-    p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = reduction  ,
+    p2 <- Seurat::DimPlot(  seurat.obj , label = T,  repel = T , reduction = reduction  ,  alpha = 0.4  ,   seed = 100  ,
                             cols =  Seurat::DiscretePalette( length( levels( seurat.obj ) ) + 1, palette = 'parade', shuffle = T)
                             )
   )

@@ -122,7 +122,7 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 
 
     #2
-    sample_size <- min(5, length(X))
+    sample_size <- min( max(  round( length(X) * 0.05 ) , 1 ) , 5  )
     set.seed(100)
     sample_idx <- sample(seq_along(X), sample_size)
 
@@ -175,75 +175,60 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     max_safe_cores <- floor((limit_mem_gb / (avg_mem_per_task_mb / 1024)) * 0.9)
     max_safe_cores <- max(1, max_safe_cores)
 
-    if ( max_safe_cores*0.9 > target_threads  ){
+    chunk_size <- floor( max(2, min(length(X), max_safe_cores ) ) * 0.9 )
 
-      target_threads <- min( target_threads  , length(X)  )
+    myratio <- chunk_size / target_threads
+    if( avg_mem_per_task_mb >= 100 & myratio < 100 ){
+      target_threads = floor( max( target_threads / 3,  target_threads / 100   ) )
+    }
 
-      if( time ){ message(
-        ww.log_time_title(),
-        ww.log_text_coloured( s.c = 's' ),
-        "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
-        "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
-        "; Threads used: ", ww.log_text_coloured( text = target_threads , color = 'red' ),'.'
-      )}
-      #
-      if(pb){
-        final_results <- pbmcapply::pbmclapply( X = X, FUN = FUN, ..., mc.cores = target_threads )
-      }else{
-        final_results <- parallel::mclapply( X = X, FUN = FUN, ..., mc.cores = target_threads )
+	if(  length(X) < 3   ){
+	  indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 1  )
+	}else{
+	  indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 2  )
+	}
+
+
+    #5
+    final_results <- vector("list", length(X))
+    total_chunks <- length(indices)
+
+    current_cores <- min( target_threads, max_safe_cores  )
+    if( time ){ message(
+      ww.log_time_title(),
+      ww.log_text_coloured( s.c = 's' ),
+      "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
+      "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
+      "; Threads used: ", ww.log_text_coloured( text = current_cores , color = 'red' ),'.'
+    )}
+    #
+    progressr::with_progress({
+      mypb<- progressr::progressor(steps = total_chunks )
+
+      for (i in seq_along(indices)){
+        #
+        curr_idx <- indices[[i]]
+        #
+        batch_res <- parallel::mclapply(
+          X = X[curr_idx],
+          FUN = FUN,
+          ...,
+          mc.cores = min( current_cores  , length(  X[curr_idx]   )  )
+        )
+        final_results[curr_idx] <- batch_res
+        #
+        mypb()
       }
-      #
 
-    }else{
-      chunk_size <- floor( max(2, min(length(X), max_safe_cores ) ) * 0.9 )
-
-      myratio <- chunk_size / target_threads
-      if( avg_mem_per_task_mb >= 100 & myratio < 100 ){
-        target_threads = floor( max( target_threads / 3,  target_threads / 100   ) )
-      }
-
-      indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 2  )
-
-      #5
-      final_results <- vector("list", length(X))
-      total_chunks <- length(indices)
-
-      current_cores <- min( target_threads, max_safe_cores  )
-      if( time ){ message(
-        ww.log_time_title(),
-        ww.log_text_coloured( s.c = 's' ),
-        "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
-        "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
-        "; Threads used: ", ww.log_text_coloured( text = current_cores , color = 'red' ),'.'
-      )}
-      #
-      progressr::with_progress({
-        mypb<- progressr::progressor(steps = total_chunks )
-
-        for (i in seq_along(indices)){
-          #
-          curr_idx <- indices[[i]]
-          #
-          batch_res <- parallel::mclapply(
-            X = X[curr_idx],
-            FUN = FUN,
-            ...,
-            mc.cores = min( current_cores  , length(  X[curr_idx]   )  )
-          )
-          final_results[curr_idx] <- batch_res
-          #
-          mypb()
-        }
-
-      },
+    },
       handlers = progressr::handlers(  progressr::handler_progress(
         format = "[:bar] :percent | Elapsed: :elapsed | ETA: :eta",
         clear = FALSE
       )),
       enable = pb
-      )
-      #
-    }
+    )
+    #
+
   }else{
     threads <- max(1, as.integer( threads ) )
     threads <- min( threads  , length(X) )

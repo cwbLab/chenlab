@@ -30,7 +30,7 @@
 #'
 #'
 #' @returns
-#' NULL.
+#' After successfully saving, return the name of the file saved locally.
 #'
 #' @examples
 #' x1 <- data.frame(int = sample(1e3, replace=TRUE), num = rnorm(1e3) )
@@ -69,14 +69,19 @@ ww.qsave <- function(filename, ... ,
                             title = ww.log_text_coloured( text = sprintf("⚠️ '%s' already exists. Do you want to overwrite it?",  filename  ) , color = 'yellow' )
                             )
       if( choice != 1  ){
-        message( ww.log_time_title() , 'Operation cancelled.'  )
+        message( ww.log_time_title() , '⚠️ Operation cancelled.'  )
         return(base::invisible(NULL))
+      }else{
+        message(ww.log_time_title() ,
+                ww.log_text_coloured(  text = filename , color = 'red'   ) , ' will be overwritten.'
+        )
       }
       #
     }else{
       warning(
         sprintf("⚠️ '%s' already exists and will not be overwritten. Set `force = TRUE` to overwrite it.",  filename  )
       )
+      return(base::invisible(NULL))
     }
   }
 
@@ -161,7 +166,7 @@ ww.qsave <- function(filename, ... ,
   }
 
   #
-  return(base::invisible(NULL))
+  return(base::invisible(filename))
 }
 
 
@@ -221,8 +226,11 @@ w_baseRead <- function(filename , version  ){
 #' @param nthreads As with [qs::qread] or [qs2::qs_read], a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
 #'
 #' @returns
-#' NULL.
-#'
+#' \itemize{
+#'   \item When return is F, the value of the filename parameter is returned after successful loading. 
+#'   \item When return is T, the value of the variable is returned.
+#' }
+#' 
 #' @examples
 #' x1 <- data.frame(int = sample(1e3, replace=TRUE), num = rnorm(1e3) )
 #' x2 <- data.frame(int = sample(1e4, replace=TRUE), num = rnorm(1e4) )
@@ -352,7 +360,7 @@ ww.qread <- function( filename , return = FALSE ,
           base::list2env(w_qload_obj_list, envir = envir)
         )
       )
-      return(base::invisible(NULL))
+      return(base::invisible(filename))
     }else{
       if( base::length( w_qload_obj_list ) == 1  ){
         return(  w_qload_obj_list[[1]]  )

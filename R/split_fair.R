@@ -16,12 +16,12 @@
 ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 ){
   n <- length(x)
 
-  # 1. chunk / number
+  ## 1. chunk / number
   if (!is.null(chunk.length)){
 
     #chunk
-    if( min( chunk.length ,min.length ) == chunk.length   ){
-      stop("The value of chunk.length must be greater than min.length.")
+    if( min( chunk.length , min.length ) <  min.length   ){
+      stop("The value of `min.length` can't be greater than `chunk.length`.")
     }
     #
     num_chunks <- max(1, floor(n / max(1, chunk.length)))
@@ -41,7 +41,7 @@ ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 
     stop("Either chunk.length or number must be specified.")
   }
 
-  # 2. min.length
+  ## 2. min.length
   if (n / num_chunks < min.length) {
     num_chunks <- max(1, floor(n / min.length))
   }
@@ -49,7 +49,7 @@ ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 
   #
   if (num_chunks <= 1 || n == 0) return(list(x))
 
-  # 3. split_fair
+  ## 3. split_fair
   base_size <- floor(n / num_chunks)
 
   #
@@ -63,12 +63,13 @@ ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 
     #chunk.length
     if( !is.null(chunk.length) ){
       mystart <- 1
-      while (m1) {
+      while (m1 & mystart <= length(raw_index) ) {
         if( mystart > length( chunk_lengths ) ){  mystart <- 1   }
         #
-        if( extra < min.length  ){
+        raw_d <- chunk_lengths[ raw_index[ mystart ] ]
+        if( extra < min.length & raw_d > min.length ){
           #
-          chunk_lengths[ raw_index[ mystart ] ]  <- chunk_lengths[ raw_index[ mystart ] ] - 1
+          chunk_lengths[ raw_index[ mystart ] ]  <- raw_d - 1
           extra <- extra + 1
 
           mystart <- mystart + 1
@@ -88,17 +89,35 @@ ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 
     }
   }
 
-  # 4.
+  ## 4. recheck
+  final_index = which( chunk_lengths < min.length  )
+  if(  length( final_index ) > 0   ){
+    #
+    for( i in final_index ){
+      if(  length( chunk_lengths  ) > 1  ){
+        chunk_lengths[ i - 1 ] <- chunk_lengths[ i - 1 ] + chunk_lengths[i]
+        chunk_lengths <- chunk_lengths[-c(i)]
+      }
+    }
+    #
+  }
+
+  ## 5. generate sequence
   ends <- cumsum(chunk_lengths)
   starts <- c(1, ends[-length(ends)] + 1)
 
   res <- lapply(seq_along(starts), function(i){
-    x[starts[i]:ends[i]]
+    #
+    s = starts[i]
+    e = min( ends[i] , n )
+
+    return( x[ s:e ] )
+    #
   })
 
-  # 5.
+  ## 6. return
   return(res)
-}
 
+}
 
 

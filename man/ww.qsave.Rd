@@ -41,7 +41,7 @@ Set to \code{TRUE} to overwrite the existing file.}
 \item{nthreads}{As with \link[qs:qsave]{qs::qsave} or \link[qs2:qs_save]{qs2::qs_save}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }
 \value{
-NULL.
+After successfully saving, return the name of the file saved locally.
 }
 \description{
 Wraps the \code{save} function across different versions of the \code{qs} package to enable fast serialization of either the entire R environment or a set of specified objects to a local file, with significantly improved performance compared to the base R functions \code{save}, \code{save.image} and \code{saveRDS}.

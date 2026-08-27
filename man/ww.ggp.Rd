@@ -32,11 +32,11 @@ ww.ggp(
 
 \item{mode}{There are two preview modes:
 
-(1) M1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
+(1) 'M1'. M1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
 
-(2) M2 reloads the exported image from the local file and previews it.
+(2) 'M2'. M2 reloads the exported image from the local file and previews it.
 
-(3) If local image preview is not required, set this parameter to FALSE.}
+(3) FALSE. If local image preview is not required, set this parameter to FALSE.}
 }
 \description{
 This function wraps and extends \code{ggpubr::ggexport} to facilitate saving ggplot objects to local files. In addition, it provides a preview window for immediate visualization of exported images.

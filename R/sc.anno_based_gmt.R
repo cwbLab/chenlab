@@ -7,6 +7,7 @@
 #' @param object A processed Seurat object with computed embeddings (e.g., PCA/UMAP) and defined cluster identities accessible via the `Seurat::Idents` function.
 #' @param gmt An absolute file path to a GMT file.
 #' @param markers The original output results of Seurat's `FindAllMarkers` function.
+#' @param markers.method The threshold used to identify markers.
 #' @param top Provide an integer specifying the number of top-ranked positive markers (sorted by avg_log2FC) to retain for downstream analysis.
 #' @param write Whether to save the analysis results locally.
 #' @param source Provide a string representing the local experiment ID. It has no computational significance and is used for reference or labeling purposes only.
@@ -27,13 +28,16 @@
 #' @export
 #'
 #'
-ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T , source  = 'gmt' ){
+ww.sc.anno_based_gmt <- function( object , gmt , markers , markers.method =  'avg_log2FC > 0 & p_val_adj < 0.05 ' , top = 20 , write = F , source  = 'gmt' ){
   #
   ww.package_install( "Seurat" , method = "I"  )
 
   ###load required packages
   ww.package_library( dplyr , GSEABase , stringr , Seurat ,  data.table   )
 
+  message(  ww.log_time_title()   , ww.log_text_coloured( 's' ) )
+
+  #
   mysc <- object
   mygmt <- gmt
 
@@ -41,8 +45,8 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
   mysc$raw_cluster <- Idents(mysc)
 
   #2
-  marker_data_pos <- subset( markers , avg_log2FC > 0 )
-  marker_data_pos <- group_by(marker_data_pos,cluster)
+  marker_data_pos <- subset( markers , eval(parse(text =  markers.method )) )
+  marker_data_pos <- group_by(marker_data_pos, cluster)
   top_pos <- top_n( marker_data_pos , n = top, wt = avg_log2FC)
 
   #3
@@ -50,6 +54,8 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
     ###get input data
     mymarkers <- GSEABase::getGmt(markers_gmt);genes <- split(top_res$gene,top_res$cluster)
     ###get the result of markers annotation
+    message(  ww.log_time_title()   , '[ 1/4 ] Extract marker information.'  )
+
     res <- lapply(genes,function(x){
       cell_res <- lapply(mymarkers, function(y){
         markers <- y@geneIds[which(y@geneIds != '')];cell_name <- y@setName
@@ -57,6 +63,7 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
         if (length(hit_markers) != 0){return(c(cell_name, paste(sort(hit_markers),collapse  = ';'),length(hit_markers),length(hit_markers)/length(markers),source))}})
       if(length(cell_res[!unlist(lapply(cell_res,is.null))]) == 0){return(NULL)}else{return(cell_res[!unlist(lapply(cell_res,is.null))])}})
     ###estimate the number of clusters which are marked
+    message(  ww.log_time_title()   , '[ 2/4 ] Estimate the number of clusters containing markers.'  )
     if(length(res[!unlist(lapply(res,is.null))]) ==0 ){print('No cluster can be marked.');return(NA)}else{
       ###If at least one cluster can be marked, the program continues to run
       ult_res <- data.frame()
@@ -70,9 +77,10 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
         clusters<-ifelse(length(clusters) != 1,clusters[clusters != unlist(x)[[6]]] %>% paste(collapse = ';'),NA)})
       ult_res <- dplyr::select(ult_res,-marker_source,marker_source)
       #estimate not 0 cell proportion and abundance of markers for each cluster
+      message(  ww.log_time_title()   , '[ 3/4 ] Calculate the proportion of non-zero cells and marker abundance for each cluster.'  )
       split_data <- SplitObject(seurat_class)
-      split_res <- lapply(split_data, function(x){ as.data.frame( GetAssayData( x, layer = 'data' ) )})
-      new_res <- ww.smc(1:nrow(ult_res),function(x){
+      split_res <- lapply(split_data, function(x){ GetAssayData( x, layer = 'data' ) })
+      new_res <- ww.pblapply(1:nrow(ult_res),function(x){
         x = ult_res[x,] %>% unlist() %>% as.character()
         genes <- str_split(x[[2]],';')[[1]]
         proportin_res <- lapply(genes, function(y){
@@ -99,7 +107,7 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
                     paste(avg_log2FC,collapse = ';') , paste(  genes  , collapse = ';' )  )
 
         return( c(op , op2) )
-      })
+      } ,time = F )
       new_res <- rbindlist( new_res ) %>% as.data.frame()
       colnames( new_res ) <- c( colnames( ult_res )  ,
                                 'not_0_cell_proportion' , 'not_0_cell_proportion_max' , 'not_0_cell_mean_abundance' ,
@@ -107,6 +115,7 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
       new_res$markers <- new_res$genes
       new_res$genes <- NULL
       ###sort by cluster , markers_number , not_0_cell_proportion_max
+      message(  ww.log_time_title()   , '[ 4/4 ] Sort by cluster, markers_number, and not_0_cell_proportion_max.'  )
       ult_res <- dplyr::select(new_res,-marker_source,-hit_markers_num_2_all_markers_num,hit_markers_num_2_all_markers_num,marker_source)
 
       ult_res$cluster <- as.character(ult_res$cluster);ult_res$markers_number <- as.integer(ult_res$markers_number)
@@ -131,6 +140,7 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , top = 20 , write = T 
     anno.res <- dplyr::arrange(  anno.res , cluster , -markers_number )
     #
   }
+  message(  ww.log_time_title()   , ww.log_text_coloured( 'c' ) )
   #
   return( as.data.frame( anno.res ) )
 }

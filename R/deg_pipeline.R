@@ -24,12 +24,7 @@ ww.deg_pipeline <- function( counts,tpm,group,contrast,p.adj=0.05,FC=2,write = F
 
 
   #packages
-  library(dplyr)
-  library(DESeq2)
-  library(ggpubr)
-  library(edgeR)
-  library(limma)
-  library(data.table)
+  ww.package_library( dplyr , DESeq2,  ggpubr,  edgeR ,  limma ,  data.table )
 
   #get contrast
   x=ipcontrast

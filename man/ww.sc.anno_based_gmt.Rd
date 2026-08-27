@@ -4,7 +4,15 @@
 \alias{ww.sc.anno_based_gmt}
 \title{Annotate clusters for scRNA-seq}
 \usage{
-ww.sc.anno_based_gmt(object, gmt, markers, top = 20, write = T, source = "gmt")
+ww.sc.anno_based_gmt(
+  object,
+  gmt,
+  markers,
+  markers.method = "avg_log2FC > 0 & p_val_adj < 0.05 ",
+  top = 20,
+  write = F,
+  source = "gmt"
+)
 }
 \arguments{
 \item{object}{A processed Seurat object with computed embeddings (e.g., PCA/UMAP) and defined cluster identities accessible via the \code{Seurat::Idents} function.}
@@ -12,6 +20,8 @@ ww.sc.anno_based_gmt(object, gmt, markers, top = 20, write = T, source = "gmt")
 \item{gmt}{An absolute file path to a GMT file.}
 
 \item{markers}{The original output results of Seurat's \code{FindAllMarkers} function.}
+
+\item{markers.method}{The threshold used to identify markers.}
 
 \item{top}{Provide an integer specifying the number of top-ranked positive markers (sorted by avg_log2FC) to retain for downstream analysis.}
 

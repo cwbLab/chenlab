@@ -56,9 +56,6 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
   if(  is.character( plot  )  ){
     filename = plot
     model = 'M2'
-    message( ww.log_time_title(), "Previewing local file: ",
-             ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
-
   }else{
     #
     if ( is.null(file)  ){
@@ -71,13 +68,13 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
       if (  stringr::str_ends( filename , 'svg' )  | stringr::str_ends( filename , 'pdf' )   ){
         ggpubr::ggexport( plot , filename = filename,
                           height = h,
-                          width = w
+                          width = w , verbose = F
         )
       }else{
         ggpubr::ggexport( plot , filename = filename,
                           res = res ,
                           height = h * res ,
-                          width = w * res
+                          width = w * res , verbose = F
         )
       }
     )
@@ -85,9 +82,14 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
     message( ww.log_time_title(), "Saved to local: ",
              ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
   }
-
   #
   if ( base::interactive() ){
+    #
+    if(  model  %in% c( 'M1' , 'M2' )  ){
+      message( ww.log_time_title(), "Previewing local file: ",
+               ww.log_text_coloured( text =  filename , color = 'red' ), '.'  )
+    }
+
     #
     if ( model == 'M1'  ){
       ww.package_install( "ggview" ,method = "devtools::install_github('idmn/ggview')"   )
@@ -149,12 +151,11 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
 #' @param w Width of the image (inch). For raster plots, the final image width is (w × res) pixels. For vector graphics, the final width is w inches.
 #' @param mode There are two preview modes:
 #'
-#' (1) M1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
+#' (1) 'M1'. M1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
 #'
-#' (2) M2 reloads the exported image from the local file and previews it.
+#' (2) 'M2'. M2 reloads the exported image from the local file and previews it.
 #'
-#' (3) If local image preview is not required, set this parameter to FALSE.
-#'
+#' (3) FALSE. If local image preview is not required, set this parameter to FALSE.
 #'
 #' @examples
 #'
@@ -182,6 +183,11 @@ my.ggplot.op <- function( plot, pre = NULL, sur = '.png' ,
 #'
 ww.ggp <- function( plot, pre = NULL, sur = '.png' ,
                      file = NULL , res = 600 , h = 5 , w = 5 , mode = 'M2'  ){
+  #
+  if( is.null(pre) & is.null(file) ){
+    pre = base::basename( base::tempfile( pattern = 'ggp.tempfile.'  )  )
+  }
+
   #
   my.ggplot.op( plot = plot, pre = pre, sur = sur ,
                file = file , res = res , h = h , w = w , model = mode
