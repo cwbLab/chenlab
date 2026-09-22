@@ -47,3 +47,8 @@ This function returns a data.frame with 10 columns:
 \description{
 This function annotates clusters based on marker gene lists provided in GMT format and the differentially expressed genes of each cluster.
 }
+\examples{
+anno_res <- ww.sc.anno_based_gmt( object = myseurat , gmt = 'test.gmt' , markers = markers_FindAllMarkers )
+
+
+}

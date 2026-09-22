@@ -34,3 +34,10 @@ ww.package_install(
 \description{
 Check whether a package is installed and optionally install it automatically using a specified installation method.
 }
+\examples{
+
+ww.package_install(  'qs2' , method = 'I'   )
+ww.package_install(  'qs' , method = "devtools::install_github( 'qsbase/qs' )"   )
+
+
+}

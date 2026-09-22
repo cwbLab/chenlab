@@ -23,7 +23,9 @@
 #'
 #' @examples
 #'
-#' seurat.obj
+#' seurat.obj <- chenlab::chenlab_testsc
+#' Idents(  seurat.obj ) <- 'seurat_clusters'
+#'
 #' p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 #'
 #' ### rename
@@ -39,9 +41,9 @@
 #' names(new.cluster) <- new_name$raw_cluster
 #' seurat.obj <- RenameIdents( seurat.obj, new.cluster )
 #'
+#' ###Plot
 #' p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap"  )
 #'
-#' ### plot
 #' ( p1 | p2 ) + patchwork::plot_annotation( tag_levels = list(c('raw', 'fine'), '1') )
 #'
 ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , downsample = 200 , seed = 100 , plot = T ){
@@ -135,6 +137,7 @@ ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
   new.cluster <- trans_res$new_cluster
   names(new.cluster) <- trans_res$raw_cluster
   seurat.obj <- RenameIdents( seurat.obj, new.cluster )
+  seurat.obj$fine_cluster <- Idents( seurat.obj  )
   suppressMessages(
     p2 <- Seurat::DimPlot(  seurat.obj , label = T,  repel = T , reduction = reduction  ,  alpha = 0.4  ,   seed = 100  ,
                             cols =  Seurat::DiscretePalette( length( levels( seurat.obj ) ) + 1, palette = 'parade', shuffle = T)
@@ -146,6 +149,7 @@ ww.sc.fine_cluster <- function( object , reduction = "umap" , dims = NULL , down
   if( plot ){ print( ( p1 | p2 ) + patchwork::plot_annotation(tag_levels = list(c('raw', 'fine'), '1') ) ) }
 
   ##########
-  return( list(  final_cluster = new_cluster , conversion_result = trans_res  ) )
+  return( list( fine_seurat  = seurat.obj  ,final_cluster = new_cluster , conversion_result = trans_res  ) )
+
 }
 

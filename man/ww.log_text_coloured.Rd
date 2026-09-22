@@ -21,3 +21,12 @@ A character string with ANSI color codes applied, suitable for printing via \cod
 \description{
 Control the color of messages displayed via \code{message} or \code{cat} function.
 }
+\examples{
+message( ww.log_text_coloured( 's' ) )
+message( ww.log_text_coloured( 'c' ) )
+
+message( ww.log_text_coloured( text = 'Hello!'  ) )
+message( ww.log_text_coloured( text = 'Hello!' , color = 'red'  ) )
+message( ww.log_text_coloured( text = 'Hello!' , color = 'red' , color.bg = 'yellow'  ) )
+
+}

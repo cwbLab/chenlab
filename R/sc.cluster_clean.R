@@ -16,6 +16,11 @@
 #' @returns
 #' A list object containing the outlier detection results and the corresponding ggplot2 objects.
 #'
+#' @examples
+#' testsc <- chenlab::chenlab_testsc
+#' clean_sc <- ww.sc.cluster_clean( object = testsc  , group.by = 'CellType' )
+#'
+#'
 #' @export
 #'
 ww.sc.cluster_clean <- function( object , group.by ,  reduction = "umap" , dims = NULL , method = 'lof' , minLOF = 2 ,  minPts = 20 , eps = 0.8 , plot = T ){

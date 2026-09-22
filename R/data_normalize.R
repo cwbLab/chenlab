@@ -6,9 +6,11 @@
 #' @param count_file Absolute path to the raw output file from featureCounts
 #' @param op.dir Directory to save the result files. If set to NULL, the results will not be automatically saved to the local disk.
 #'
+#' @examples
+#' norm_data <- ww.data_normalize(  'featureCounts.raw_output.txt' , op.fir = '.'  )
+#'
 #' @export
 #'
-
 ww.data_normalize <- function( count_file , op.dir = '.' ){
   ww.package_library( scater, stringr )
 

@@ -7,17 +7,24 @@
 ww.palette_view(palette_names = NULL, ncolor = 5, colors = NULL, cat = F)
 }
 \arguments{
-\item{palette_names}{A palette name in SCP package}
+\item{palette_names}{A palette name in SCP package.}
 
-\item{ncolor}{Number of colors returned}
+\item{ncolor}{Number of colors returned.}
 
-\item{colors}{A character vector of color names for previewing. When provided, the palette_names argument will be ignored}
+\item{colors}{A character vector of color names for previewing. When provided, the palette_names argument will be ignored.}
 
-\item{cat}{Whether to print colors}
+\item{cat}{Whether to print colors.}
 }
 \value{
 A named vector of color names.
 }
 \description{
 Get colors from a SCP palette / Preview palette
+}
+\examples{
+mycolors <- ww.palette_view( 'npg' , ncolor = 10)
+mycolors
+
+ww.palette_view( colors = mycolors ,cat = T  )
+
 }

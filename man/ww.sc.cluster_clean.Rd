@@ -41,3 +41,9 @@ A list object containing the outlier detection results and the corresponding ggp
 \description{
 Detect outlier cells within each cluster based on the low-dimensional embedding matrix, thereby improving the visualization of dimensionality reduction results (e.g., UMAP plots).
 }
+\examples{
+testsc <- chenlab::chenlab_testsc
+clean_sc <- ww.sc.cluster_clean( object = testsc  , group.by = 'CellType' )
+
+
+}

@@ -14,3 +14,8 @@ ww.seurat_5_3(seurat, v = "V3")
 \description{
 Seurat object version conversion
 }
+\examples{
+testsc <- chenlab::chenlab_testsc
+testsc_v3 <- ww.seurat_5_3( testsc  )
+
+}

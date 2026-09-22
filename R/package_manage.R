@@ -20,6 +20,12 @@
 #'
 #' 2. FALSE: Returned when the package check fails or the installation is unsuccessful.
 #'
+#' @examples
+#'
+#' ww.package_install(  'qs2' , method = 'I'   )
+#' ww.package_install(  'qs' , method = "devtools::install_github( 'qsbase/qs' )"   )
+#'
+#'
 #' @export
 #'
 ww.package_install <- function( package.name, method = 'I', interactive.install = TRUE, check.only = FALSE ){

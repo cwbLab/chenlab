@@ -77,7 +77,7 @@ UNIPROT.}
 
 \item{type}{Output mode. Options are 'first' or 'any'. When set to "first" and the length of op.type is 1, the result corresponds one-to-one with the input gene vector. When 'any', a single gene may produce multiple rows in the result.}
 
-\item{homologous_species}{A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via homologene::taxData, e.g. 9606 (Homo sapiens), 10090 (Mus musculus).}
+\item{homologous_species}{A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via \link[homologene:taxData]{homologene::taxData}, e.g. 9606 (Homo sapiens), 10090 (Mus musculus).}
 
 \item{threads}{Number of cores used for parallel computation. By default, the maximum computing resources are used.}
 }
@@ -89,4 +89,5 @@ gene_convert <- ww.convert_id( genes = c( 'ENSG00000001167', 'ENSG00000002079', 
 	ref = org.Hs.eg.db,
 	ip.type = c('ENSEMBL', 'ALIAS'), op.type = c('SYMBOL', 'ENTREZID'),
 	homologous_species =  10090 )
+
 }

@@ -14,3 +14,7 @@ ww.group_colors(number, continuous = F)
 \description{
 Up to 50 groups
 }
+\examples{
+mycolor <- ww.group_colors( 3 )
+
+}

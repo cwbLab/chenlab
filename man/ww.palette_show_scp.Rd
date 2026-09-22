@@ -13,19 +13,24 @@ ww.palette_show_scp(
 )
 }
 \arguments{
-\item{palette_names}{A character vector of palette names in SCP package}
+\item{palette_names}{A character vector of palette names in SCP package.}
 
-\item{ncolor}{Number of colors to display}
+\item{ncolor}{Number of colors to display.}
 
-\item{ncol}{Number of columns for displaying colors}
+\item{ncol}{Number of columns for displaying colors.}
 
-\item{h2w}{The ratio of color bar height to width}
+\item{h2w}{The ratio of color bar height to width.}
 
-\item{name.size}{Text size for color names}
+\item{name.size}{Text size for color names.}
 }
 \value{
 A ggplot2 object.
 }
 \description{
 Display the palettes in SCP
+}
+\examples{
+
+ww.palette_show_scp()
+
 }

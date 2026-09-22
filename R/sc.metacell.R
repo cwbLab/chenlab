@@ -142,7 +142,6 @@ sc.metacell.cluster <- function( object , cluster ,
   #message( ww.log_time_title() , ww.log_text_coloured( 'c' )   )
   #
   meta.data <- meta.data[ match( colnames(exp) , meta.data$cell.id ) , ]
-  id_trans <- id_trans[ match( colnames(exp) , id_trans$cell.id ) , ]
   #
   return( list( mtx = exp , meta.data = meta.data , method = method , matched.id = id_trans,
                 non.metacell = aba_cells , non.metacell.reserved = min.cluster.reserved  )   )
@@ -212,7 +211,6 @@ sc.metacell.group <- function( object , cluster , group.by ,
     mtx <- do.call( base::cbind, mtx )
     #
     meta.data <- meta.data[ match( colnames(mtx) , meta.data$cell.id ) , ]
-    matched.id <- matched.id[ match( colnames(mtx) , matched.id$cell.id ) , ]
   }
   #
   return(  list(  mtx = mtx , meta.data = meta.data , method = method ,
@@ -249,6 +247,12 @@ sc.metacell.group <- function( object , cluster , group.by ,
 #'
 #' @returns
 #' A list containing: (1) the metacell expression matrix (averaged), and (2) the cluster assignment of each metacell.
+#'
+#' @examples
+#' testsc <- chenlab::chenlab_testsc
+#' metacell.sc <- ww.sc.metacell(  object = testsc , cluster  =  'CellType' )
+#' metacell.sc2 <- ww.sc.metacell(  object = testsc , cluster  =  'CellType' , group.by = 'CMV_grade' )
+#'
 #'
 #' @export
 #'

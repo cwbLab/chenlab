@@ -18,3 +18,10 @@ ww.mtx_unique_row(exp, raw_row, convert_name, type = "max")
 \description{
 After ID conversion, multiple rows may correspond to the same ID. This function can be used to process them and retain unique rows.
 }
+\examples{
+mtx_convert <- ww.mtx_unique_row( exp = exp , raw_row = rownames( exp  ),
+                                  convert_name  = c( 't1' ,'t2' ,'t3' ,'t2' ,'t4'   )
+                                  )
+
+
+}

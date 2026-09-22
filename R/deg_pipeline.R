@@ -4,13 +4,20 @@
 #' Automatically calls the DESeq2, edgeR, and limma packages to identify differentially expressed genes
 #'
 #'
-#' @param counts Data frame object containing the counts matrix
-#' @param tpm Data frame object containing the TPM matrix
-#' @param group Grouping vector for samples (up to two groups)
-#' @param contrast Comparison vector, e.g., c('M', 'N'). Here, 'N' is the control, and fold change (FC) is calculated as M/N
-#' @param p.adj P-value threshold
-#' @param FC Fold change (FC) threshold
-#' @param write If set to TRUE, the results of differential gene expression analysis from each algorithm will be automatically saved locally
+#' @param counts Data frame object containing the counts matrix.
+#' @param tpm Data frame object containing the TPM matrix.
+#' @param group Grouping vector for samples (up to two groups).
+#' @param contrast Comparison vector, e.g., c('M', 'N'). Here, 'N' is the control, and fold change (FC) is calculated as M/N.
+#' @param p.adj P-value threshold.
+#' @param FC Fold change (FC) threshold.
+#' @param write If set to TRUE, the results of differential gene expression analysis from each algorithm will be automatically saved locally.
+#'
+#' @examples
+#' deg_res <- ww.deg_pipeline( counts = counts_exp ,tpm = tpm_exp ,
+#'                             group = c( 'M','M','M','N','N','N'  ), contrast = c(  'M' , 'N'  ),
+#'                             p.adj=0.05,FC=2,write = F
+#'                             )
+#'
 #'
 #' @export
 #'

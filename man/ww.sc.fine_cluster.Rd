@@ -40,7 +40,9 @@ This improves interpretability and facilitates downstream cell type annotation b
 }
 \examples{
 
-seurat.obj
+seurat.obj <- chenlab::chenlab_testsc
+Idents(  seurat.obj ) <- 'seurat_clusters'
+
 p1 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap" )
 
 ### rename
@@ -56,9 +58,9 @@ new.cluster <- new_name$new_cluster
 names(new.cluster) <- new_name$raw_cluster
 seurat.obj <- RenameIdents( seurat.obj, new.cluster )
 
+###Plot
 p2 <- Seurat::DimPlot(  seurat.obj , label = T,repel = T , reduction = "umap"  )
 
-### plot
 ( p1 | p2 ) + patchwork::plot_annotation( tag_levels = list(c('raw', 'fine'), '1') )
 
 }

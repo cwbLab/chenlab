@@ -52,3 +52,10 @@ A list containing: (1) the metacell expression matrix (averaged), and (2) the cl
 \description{
 Generates a metacell expression matrix for a Seurat object, where each metacell is constructed by aggregating multiple single cells and its expression is defined as the mean expression across the constituent cells.
 }
+\examples{
+testsc <- chenlab::chenlab_testsc
+metacell.sc <- ww.sc.metacell(  object = testsc , cluster  =  'CellType' )
+metacell.sc2 <- ww.sc.metacell(  object = testsc , cluster  =  'CellType' , group.by = 'CMV_grade' )
+
+
+}

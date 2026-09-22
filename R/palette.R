@@ -1,13 +1,17 @@
 #' Display the palettes in SCP
 #'
-#' @param palette_names A character vector of palette names in SCP package
-#' @param ncolor Number of colors to display
-#' @param ncol Number of columns for displaying colors
-#' @param h2w The ratio of color bar height to width
-#' @param name.size Text size for color names
+#' @param palette_names A character vector of palette names in SCP package.
+#' @param ncolor Number of colors to display.
+#' @param ncol Number of columns for displaying colors.
+#' @param h2w The ratio of color bar height to width.
+#' @param name.size Text size for color names.
 #'
 #' @returns
 #' A ggplot2 object.
+#'
+#' @examples
+#'
+#' ww.palette_show_scp()
 #'
 #' @export
 ww.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2w = 0.6,
@@ -99,13 +103,19 @@ ww.palette_show_scp <- function (palette_names = NULL, ncolor = 20, ncol = 5, h2
 #
 #' Get colors from a SCP palette / Preview palette
 #'
-#' @param palette_names A palette name in SCP package
-#' @param ncolor Number of colors returned
-#' @param colors A character vector of color names for previewing. When provided, the palette_names argument will be ignored
-#' @param cat Whether to print colors
+#' @param palette_names A palette name in SCP package.
+#' @param ncolor Number of colors returned.
+#' @param colors A character vector of color names for previewing. When provided, the palette_names argument will be ignored.
+#' @param cat Whether to print colors.
 #'
 #' @returns
 #' A named vector of color names.
+#'
+#' @examples
+#' mycolors <- ww.palette_view( 'npg' , ncolor = 10)
+#' mycolors
+#'
+#' ww.palette_view( colors = mycolors ,cat = T  )
 #'
 #' @export
 #'

@@ -25,7 +25,13 @@
 #' 9. hit_markers_num_2_all_markers_num: The ratio of `markers_number` to the `total number of markers` for the corresponding cell_type.
 #' 10. marker_source: For annotation purposes only.
 #'
+#'
+#' @examples
+#' anno_res <- ww.sc.anno_based_gmt( object = myseurat , gmt = 'test.gmt' , markers = markers_FindAllMarkers )
+#'
+#'
 #' @export
+#'
 #'
 #'
 ww.sc.anno_based_gmt <- function( object , gmt , markers , markers.method =  'avg_log2FC > 0 & p_val_adj < 0.05 ' , top = 20 , write = F , source  = 'gmt' ){

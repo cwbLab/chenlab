@@ -11,8 +11,14 @@
 #' @returns
 #' A list of subsets.
 #'
+#' @examples
+#' a1 <- ww.split_fair( 1:21 , chunk.length = 5 , min.length = 2  )
+#' a2 <- ww.split_fair( 1:21 , chunk.length = 5 , min.length = 1  )
+#'
+#' a3 <- ww.split_fair( 1:21 , number = 6 , min.length = 2  )
 #'
 #' @export
+#'
 ww.split_fair <- function(x, chunk.length = NULL, number = NULL, min.length = 2 ){
   n <- length(x)
 

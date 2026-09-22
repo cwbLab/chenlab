@@ -14,3 +14,7 @@ ww.data_normalize(count_file, op.dir = ".")
 \description{
 Raw output files from the featureCounts algorithm, used to calculate CPM, TPM, and FPKM, respectively
 }
+\examples{
+norm_data <- ww.data_normalize(  'featureCounts.raw_output.txt' , op.fir = '.'  )
+
+}

@@ -1,5 +1,4 @@
 
-
 #' Time of log
 #'
 #' @param format Format of time. `1` (bold and cyan); `2` (bold); `3` (regular).
@@ -7,7 +6,13 @@
 #' @returns
 #' The returned value is designed to be used with the `message` or `cat` function.
 #'
+#' @examples
+#' message( ww.log_time_title(1) )
+#' message( ww.log_time_title(2) )
+#' message( ww.log_time_title(3) )
+#'
 #' @export
+#'
 ww.log_time_title <- function(  format = 1  ){
 
   text <- paste0( '[', format(Sys.time(), "%Y-%m-%d %H:%M:%S") , '] ' )
@@ -40,7 +45,17 @@ ww.log_time_title <- function(  format = 1  ){
 #' @returns
 #' A character string with ANSI color codes applied, suitable for printing via `message` or `cat` function.
 #'
+#' @examples
+#' message( ww.log_text_coloured( 's' ) )
+#' message( ww.log_text_coloured( 'c' ) )
+#'
+#' message( ww.log_text_coloured( text = 'Hello!'  ) )
+#' message( ww.log_text_coloured( text = 'Hello!' , color = 'red'  ) )
+#' message( ww.log_text_coloured( text = 'Hello!' , color = 'red' , color.bg = 'yellow'  ) )
+#'
 #' @export
+#'
+#'
 ww.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green' , color.bg = NULL   ){
   #
   ww.package_library( crayon )
@@ -74,7 +89,15 @@ ww.log_text_coloured <- function( s.c = 's', text = NULL,  color = 'green' , col
 #' @returns
 #' The returned value is designed to be used with the message function.
 #'
+#' @examples
+#' a <- Sys.time()
+#' b <- Sys.time()
+#' diff_time <- ww.log_time_runtime( a , b )
+#'
+#' print( diff_time )
+#'
 #' @export
+#'
 ww.log_time_runtime <- function(  t.minor , t.major , prefix = 'Runtime: '   ){
   time_diff <- hms::as_hms( as.numeric( t.major - t.minor, units = "secs") )
   op <- paste0( prefix , time_diff , '.' )

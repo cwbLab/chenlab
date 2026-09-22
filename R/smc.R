@@ -56,6 +56,126 @@ ww.pblapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
 }
 
 
+##############
+smc.core <- function(X, FUN, ...,  total_cores , mem.ratio.max  , mem.max ,
+                     pb  , time ){
+
+  #1
+  target_threads <- total_cores - 1
+  target_threads <- max(1, min(target_threads, total_cores))
+
+
+  #2
+  sample_size <- min( max(  round( length(X) * 0.05 ) , 1 ) , 5  )
+  set.seed(100)
+  sample_idx <- sample(seq_along(X), sample_size)
+
+  #
+  mean_used <- c()
+  for(  temp_idx  in  sample_idx  ){
+    temp <- bench::bench_memory(
+      suppressMessages( suppressWarnings( capture.output(
+        test_results <- base::lapply(X = X[temp_idx], FUN = FUN, ...)
+      ) ) )
+    )[['mem_alloc']]
+    temp <- max( as.numeric( temp ) / 1024^2 , 0.1 )
+
+    mean_used <- c( mean_used , temp )
+  }
+
+  #minimum,0.5 MB
+  avg_mem_per_task_mb <- max( median( as.numeric( mean_used ) ) * 1.1  , 0.5 )
+
+  #3
+  get_total_mem_gb <- function(){
+    res <- tryCatch({
+      ps::ps_system_memory()[['avail']] / 1024^3
+    }, error = function(e) NA )
+    return(res)
+  }
+
+  total_mem_gb <- get_total_mem_gb()
+  if( !is.na(total_mem_gb)  ){
+    total_mem_gb <- total_mem_gb
+    if( !is.null( mem.max  ) ){
+      total_mem_gb <- as.numeric(mem.max)
+    }
+  }else{
+    if( is.null( mem.max  ) ){
+      total_mem_gb <- avg_mem_per_task_mb / 1024
+    }else{
+      total_mem_gb <- as.numeric(mem.max)
+    }
+    #
+    message( 'Unable to automatically determine available system memory. Users can explicitly set the memory limit via the mem.max parameter. Memory allowed: ',
+             ww.log_text_coloured( text = round( total_mem_gb , digits = 3  ) , color = 'red' ),
+             ' GB.'
+    )
+  }
+
+  limit_mem_gb <- total_mem_gb * mem.ratio.max
+
+  #4
+  max_safe_cores <- floor((limit_mem_gb / (avg_mem_per_task_mb / 1024)) * 0.9)
+  max_safe_cores <- max(1, max_safe_cores)
+
+  chunk_size <- floor( max(2, min(length(X), max_safe_cores ) ) * 0.9 )
+
+  myratio <- chunk_size / target_threads
+  if( avg_mem_per_task_mb >= 100 & myratio < 100 ){
+    target_threads = floor( max( target_threads / 3,  target_threads / 100   ) )
+  }
+
+  if(  length(X) < 3   ){
+    indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 1  )
+  }else{
+    indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 2  )
+  }
+
+
+  #5
+  final_results <- vector("list", length(X))
+  total_chunks <- length(indices)
+
+  current_cores <- min( target_threads, max_safe_cores  )
+  if( time ){ message(
+    ww.log_time_title(),
+    ww.log_text_coloured( s.c = 's' ),
+    "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
+    "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
+    "; Threads used: ", ww.log_text_coloured( text = current_cores , color = 'red' ),'.'
+  )}
+  #
+  progressr::with_progress({
+    mypb<- progressr::progressor(steps = total_chunks )
+
+    for (i in seq_along(indices)){
+      #
+      curr_idx <- indices[[i]]
+      #
+      batch_res <- parallel::mclapply(
+        X = X[curr_idx],
+        FUN = FUN,
+        ...,
+        mc.cores = min( current_cores  , length(  X[curr_idx]   )  )
+      )
+      final_results[curr_idx] <- batch_res
+      #
+      mypb()
+    }
+
+  },
+  handlers = progressr::handlers(  progressr::handler_progress(
+    format = "[:bar] :percent | Elapsed: :elapsed | ETA: :eta",
+    clear = FALSE
+  )),
+  enable = pb
+  )
+  #
+  return(  final_results  )
+
+}
+
 
 
 #' Smart mclapply
@@ -86,7 +206,7 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
                     pb = T , time = T , unlist = F ){
   start_time <- Sys.time()
 
-  #1
+  #cores
   threads = mc.cores
   is_windows <- .Platform$OS.type == "windows"
   total_cores <- parallel::detectCores()
@@ -117,118 +237,12 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
 
   #
   if (  is.null(threads) ){
-    target_threads <- total_cores - 1
-    target_threads <- max(1, min(target_threads, total_cores))
-
-
-    #2
-    sample_size <- min( max(  round( length(X) * 0.05 ) , 1 ) , 5  )
-    set.seed(100)
-    sample_idx <- sample(seq_along(X), sample_size)
-
     #
-    mean_used <- c()
-    for(  temp_idx  in  sample_idx  ){
-      temp <- bench::bench_memory(
-        suppressMessages( suppressWarnings( capture.output(
-          test_results <- base::lapply(X = X[temp_idx], FUN = FUN, ...)
-        ) ) )
-      )[['mem_alloc']]
-      temp <- max( as.numeric( temp ) / 1024^2 , 0.1 )
-
-      mean_used <- c( mean_used , temp )
-    }
-
-    #minimum,0.5 MB
-    avg_mem_per_task_mb <- max( median( as.numeric( mean_used ) ) * 1.1  , 0.5 )
-
-    #3
-    get_total_mem_gb <- function(){
-      res <- tryCatch({
-        ps::ps_system_memory()[['avail']] / 1024^3
-      }, error = function(e) NA )
-      return(res)
-    }
-
-    total_mem_gb <- get_total_mem_gb()
-    if( !is.na(total_mem_gb)  ){
-      total_mem_gb <- total_mem_gb
-      if( !is.null( mem.max  ) ){
-        total_mem_gb <- as.numeric(mem.max)
-      }
-    }else{
-      if( is.null( mem.max  ) ){
-        total_mem_gb <- avg_mem_per_task_mb / 1024
-      }else{
-        total_mem_gb <- as.numeric(mem.max)
-      }
-      #
-      message( 'Unable to automatically determine available system memory. Users can explicitly set the memory limit via the mem.max parameter. Memory allowed: ',
-               ww.log_text_coloured( text = round( total_mem_gb , digits = 3  ) , color = 'red' ),
-               ' GB.'
-      )
-    }
-
-    limit_mem_gb <- total_mem_gb * mem.ratio.max
-
-    #4
-    max_safe_cores <- floor((limit_mem_gb / (avg_mem_per_task_mb / 1024)) * 0.9)
-    max_safe_cores <- max(1, max_safe_cores)
-
-    chunk_size <- floor( max(2, min(length(X), max_safe_cores ) ) * 0.9 )
-
-    myratio <- chunk_size / target_threads
-    if( avg_mem_per_task_mb >= 100 & myratio < 100 ){
-      target_threads = floor( max( target_threads / 3,  target_threads / 100   ) )
-    }
-
-	if(  length(X) < 3   ){
-	  indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 1  )
-	}else{
-	  indices <- ww.split_fair(  seq_along(X) , chunk.length = chunk_size , min.length = 2  )
-	}
-
-
-    #5
-    final_results <- vector("list", length(X))
-    total_chunks <- length(indices)
-
-    current_cores <- min( target_threads, max_safe_cores  )
-    if( time ){ message(
-      ww.log_time_title(),
-      ww.log_text_coloured( s.c = 's' ),
-      "Tasks total: ", ww.log_text_coloured( text = length(X) ,color = 'red' ),
-      "; Mem per task: ", ww.log_text_coloured( text = round(avg_mem_per_task_mb, 3), color = 'red' ), ww.log_text_coloured( text = ' MB' , color = 'red' ),
-      "; Threads used: ", ww.log_text_coloured( text = current_cores , color = 'red' ),'.'
-    )}
+    final_results <- smc.core(X = X, FUN = FUN, ...,  total_cores = total_cores ,
+                              mem.ratio.max = mem.ratio.max , mem.max = mem.max,
+                              pb = pb  , time = time
+                              )
     #
-    progressr::with_progress({
-      mypb<- progressr::progressor(steps = total_chunks )
-
-      for (i in seq_along(indices)){
-        #
-        curr_idx <- indices[[i]]
-        #
-        batch_res <- parallel::mclapply(
-          X = X[curr_idx],
-          FUN = FUN,
-          ...,
-          mc.cores = min( current_cores  , length(  X[curr_idx]   )  )
-        )
-        final_results[curr_idx] <- batch_res
-        #
-        mypb()
-      }
-
-    },
-      handlers = progressr::handlers(  progressr::handler_progress(
-        format = "[:bar] :percent | Elapsed: :elapsed | ETA: :eta",
-        clear = FALSE
-      )),
-      enable = pb
-    )
-    #
-
   }else{
     threads <- max(1, as.integer( threads ) )
     threads <- min( threads  , length(X) )

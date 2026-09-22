@@ -1,6 +1,6 @@
 Package: chenlab
 Title: ChenLab R Tools
-Version: 1.26.8
+Version: 1.26.9
 Authors@R: 
     person("Wenbo", "Chen", , "cwblab@outlook.com", role = c("aut", "cre"))
 Description: A collection of utility functions for bioinformatics analysis.
@@ -23,6 +23,7 @@ Imports:
 	progressr,
 	ps,
 	qs2,
+	rlang,
 	scater,
 	stringr,
 Suggests:
@@ -40,3 +41,6 @@ Suggests:
 	SCP,
 	Seurat,
 URL: https://github.com/cwbLab/chenlab
+Depends: 
+    R (>= 3.5)
+LazyData: true

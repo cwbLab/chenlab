@@ -19,3 +19,11 @@ The returned value is designed to be used with the message function.
 \description{
 Runtime of log
 }
+\examples{
+a <- Sys.time()
+b <- Sys.time()
+diff_time <- ww.log_time_runtime( a , b )
+
+print( diff_time )
+
+}

@@ -15,3 +15,9 @@ The returned value is designed to be used with the \code{message} or \code{cat} 
 \description{
 Time of log
 }
+\examples{
+message( ww.log_time_title(1) )
+message( ww.log_time_title(2) )
+message( ww.log_time_title(3) )
+
+}

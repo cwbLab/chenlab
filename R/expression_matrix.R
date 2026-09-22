@@ -61,7 +61,7 @@
 #' @param ip.type A vector of one or more gene types. Gene types must exist in the object specified by ref. Defaults to NULL, which enables automatic detection.
 #' @param op.type Similar to the ip.type, it indicates the gene identifier type to be output.
 #' @param type Output mode. Options are 'first' or 'any'. When set to "first" and the length of op.type is 1, the result corresponds one-to-one with the input gene vector. When 'any', a single gene may produce multiple rows in the result.
-#' @param homologous_species A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via homologene::taxData, e.g. 9606 (Homo sapiens), 10090 (Mus musculus).
+#' @param homologous_species A vector of species IDs for homology conversion. If specified, homologous gene IDs from the specified species will also be returned after gene ID conversion. Available species IDs can be obtained via [homologene::taxData], e.g. 9606 (Homo sapiens), 10090 (Mus musculus).
 #' @param threads Number of cores used for parallel computation. By default, the maximum computing resources are used.
 #'
 #' @examples
@@ -69,6 +69,7 @@
 #'		ref = org.Hs.eg.db,
 #'		ip.type = c('ENSEMBL', 'ALIAS'), op.type = c('SYMBOL', 'ENTREZID'),
 #'		homologous_species =  10090 )
+#'
 #' @export
 #'
 ww.convert_id <- function( genes,ref,ip.type = NULL,op.type,
@@ -257,6 +258,12 @@ ww.convert_id <- function( genes,ref,ip.type = NULL,op.type,
 #' @param raw_row Original gene vector (usually the row names).
 #' @param convert_name The converted gene vector (corresponding to raw_row) may include NA, and any rows corresponding to NA entries will be excluded from the final converted dataset.
 #' @param type Method for retaining data. Options are 'max', 'min', 'sum', 'median', or 'mean'. When 'mean' is selected, the mean of multiple rows is returned.
+#'
+#' @examples
+#' mtx_convert <- ww.mtx_unique_row( exp = exp , raw_row = rownames( exp  ),
+#'                                   convert_name  = c( 't1' ,'t2' ,'t3' ,'t2' ,'t4'   )
+#'                                   )
+#'
 #'
 #' @export
 ww.mtx_unique_row <- function( exp, raw_row, convert_name, type = 'max' ){

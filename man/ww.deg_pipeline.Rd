@@ -7,20 +7,28 @@
 ww.deg_pipeline(counts, tpm, group, contrast, p.adj = 0.05, FC = 2, write = F)
 }
 \arguments{
-\item{counts}{Data frame object containing the counts matrix}
+\item{counts}{Data frame object containing the counts matrix.}
 
-\item{tpm}{Data frame object containing the TPM matrix}
+\item{tpm}{Data frame object containing the TPM matrix.}
 
-\item{group}{Grouping vector for samples (up to two groups)}
+\item{group}{Grouping vector for samples (up to two groups).}
 
-\item{contrast}{Comparison vector, e.g., c('M', 'N'). Here, 'N' is the control, and fold change (FC) is calculated as M/N}
+\item{contrast}{Comparison vector, e.g., c('M', 'N'). Here, 'N' is the control, and fold change (FC) is calculated as M/N.}
 
-\item{p.adj}{P-value threshold}
+\item{p.adj}{P-value threshold.}
 
-\item{FC}{Fold change (FC) threshold}
+\item{FC}{Fold change (FC) threshold.}
 
-\item{write}{If set to TRUE, the results of differential gene expression analysis from each algorithm will be automatically saved locally}
+\item{write}{If set to TRUE, the results of differential gene expression analysis from each algorithm will be automatically saved locally.}
 }
 \description{
 Automatically calls the DESeq2, edgeR, and limma packages to identify differentially expressed genes
+}
+\examples{
+deg_res <- ww.deg_pipeline( counts = counts_exp ,tpm = tpm_exp ,
+                            group = c( 'M','M','M','N','N','N'  ), contrast = c(  'M' , 'N'  ),
+                            p.adj=0.05,FC=2,write = F
+                            )
+
+
 }

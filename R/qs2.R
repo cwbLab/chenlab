@@ -124,7 +124,7 @@ ww.qsave <- function(filename, ... ,
                   compress_level = compress_level ,
                   nthreads = threads )
 
-      message(ww.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ",
+      message(ww.log_time_title() , "Saved ", length(obj_names) ," objects: ", paste(obj_names, collapse = ", "), " → ",
               ww.log_text_coloured(  text = filename , color = 'red'   ), '.'
               )
     }
@@ -159,9 +159,9 @@ ww.qsave <- function(filename, ... ,
                    shuffle = shuffle ,
                    nthreads = threads )
 
-      message(ww.log_time_title() , "Saved objects: ", paste(obj_names, collapse = ", "), " → ",
-              ww.log_text_coloured(  text = filename , color = 'red'   ) , '.'
-              )
+      message(ww.log_time_title() , "Saved ", length(obj_names) ," objects: ", paste(obj_names, collapse = ", "), " → ",
+              ww.log_text_coloured(  text = filename , color = 'red'   ), '.'
+      )
     }
   }
 
@@ -227,10 +227,10 @@ w_baseRead <- function(filename , version  ){
 #'
 #' @returns
 #' \itemize{
-#'   \item When return is F, the value of the filename parameter is returned after successful loading. 
+#'   \item When return is F, the value of the filename parameter is returned after successful loading.
 #'   \item When return is T, the value of the variable is returned.
 #' }
-#' 
+#'
 #' @examples
 #' x1 <- data.frame(int = sample(1e3, replace=TRUE), num = rnorm(1e3) )
 #' x2 <- data.frame(int = sample(1e4, replace=TRUE), num = rnorm(1e4) )

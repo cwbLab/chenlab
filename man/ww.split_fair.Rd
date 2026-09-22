@@ -21,3 +21,10 @@ A list of subsets.
 \description{
 Split a vector into approximately equal-sized subsets, either by specifying the target chunk length or the number of subsets, while enforcing a minimum subset size.
 }
+\examples{
+a1 <- ww.split_fair( 1:21 , chunk.length = 5 , min.length = 2  )
+a2 <- ww.split_fair( 1:21 , chunk.length = 5 , min.length = 1  )
+
+a3 <- ww.split_fair( 1:21 , number = 6 , min.length = 2  )
+
+}
