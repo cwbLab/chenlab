@@ -39,6 +39,10 @@ mymd5 <- function( object , pattern = NULL , recursive = NULL , opfile = NULL , 
 
     b_size <- file.info(x)$size
 
+    #link
+    link_p <- Sys.readlink(x)
+    is_symlink <- !is.na(link_p) && nzchar(link_p)
+
     op <- as.list( c(
       x ,
       dirname = dirname(x),
@@ -47,14 +51,18 @@ mymd5 <- function( object , pattern = NULL , recursive = NULL , opfile = NULL , 
       size_B = b_size ,
       size_MB = b_size / 1024^2,
       size_GB = b_size / 1024^3,
-      isdir = file.info(x)$isdir
+      isdir = file.info(x)$isdir,
+      islink = is_symlink,
+      link_path = link_p
 
       )   )
     return( op )
     #
   } , mc.cores = mc.cores )
   res <- rbindlist(res) %>% as.data.frame()
-  colnames(res) <- c(  'file_path' , 'dir_name' , 'file_name' , 'MD5' , 'size_B' , 'size_MB' , 'size_GB' , 'is_dir'   )
+  colnames(res) <- c(  'file_path' , 'dir_name' , 'file_name' , 'MD5' , 'size_B' , 'size_MB' , 'size_GB' ,
+                       'is_dir', 'is_symbolic_link' , 'linked_to'
+                       )
 
   #
   if( !is.null(opfile)  ){
