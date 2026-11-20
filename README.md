@@ -1,3 +1,7 @@
+<p align="center">
+  <img width="200"  src="https://github.com/cwbLab/chenlab/tree/main/Logo/chenlab-logo.png">
+</p>
+
 # chenlab
 ChenLab R Tools
 
