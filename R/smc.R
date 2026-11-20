@@ -18,7 +18,7 @@
 #'
 #' @export
 #'
-ww.pblapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
+ww.lapply <- function( X , FUN, ... , pb = T , time = T , unlist = F ){
 
   #
   start_time <- Sys.time()
@@ -216,7 +216,7 @@ ww.smc <- function(X, FUN, ..., mc.cores = NULL, mem.ratio.max = 0.8 , mem.max =
     if( time ){ message( ww.log_time_title() , ww.log_text_coloured( s.c = 's' ) , 'Tasks: ' , length(X) ,'.'  )  }
     #
     if(pb){
-      res <- ww.pblapply( X = X, FUN = FUN, ... , time = F )
+      res <- ww.lapply( X = X, FUN = FUN, ... , time = F )
     }else{
       res <- base::lapply( X = X, FUN = FUN, ... )
     }

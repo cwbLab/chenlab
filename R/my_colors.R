@@ -87,8 +87,8 @@ myfun.grid <- function(plot){
 #' @param w Width of the image (inch). For raster plots, the final image width is (w × res) pixels. For vector graphics, the final width is w inches.
 #' @param mode There are two preview modes:
 #' \itemize{
-#'    \item M1. M1 shows a preview generated according to the specified parameters. F1 may sometimes differ slightly from the actual saved image, but it can be viewed in a separate graphics window in R.
-#'    \item M2. M2 reloads the exported image from the local file and previews it.
+#'    \item M1. M1 shows a preview generated based on the specified parameters, which may sometimes differ slightly from the actual saved image.
+#'    \item M2. M2 reloads the image saved locally, and the preview is identical to the local image.
 #'    \item FALSE. If local image preview is not required, set this parameter to FALSE.
 #' }
 #'

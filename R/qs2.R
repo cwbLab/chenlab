@@ -23,7 +23,7 @@
 #' }
 #'
 #' @param compress_level As with [qs::qsave] or [qs2::qs_save].
-#' @param shuffle As with the [qs2::qs_save].
+#' @param shuffle As with [qs2::qs_save].
 #'
 #' @param nthreads As with [qs::qsave] or [qs2::qs_save], a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.
 #'
@@ -62,6 +62,11 @@ ww.qsave <- function(filename, ... ,
                      shuffle = qs2::qopt("shuffle"),
                      nthreads = 1
 ){
+  ##########
+  if( file.exists(file.path(getwd(), filename )) ){
+    filename = file.path( getwd(), filename )
+  }
+
   ##########force
   if( !force & base::file.exists( filename ) ){
     if ( base::interactive() ){
@@ -73,7 +78,7 @@ ww.qsave <- function(filename, ... ,
         return(base::invisible(NULL))
       }else{
         message(ww.log_time_title() ,
-                ww.log_text_coloured(  text = filename , color = 'red'   ) , ' will be overwritten.'
+                ww.log_text_coloured(  text = paste0( filename ,  ' will be overwritten.'  ) , color = '#FF00FF'   )
         )
       }
       #
@@ -267,9 +272,15 @@ ww.qread <- function( filename , return = FALSE ,
                      version = 2,
                      delete = FALSE , nthreads = 1
                      ){
+
   #
-  if( !base::file.exists(  filename  ) ){
+  if( !file.exists(  filename  ) ){
     stop(  paste0(  filename ,  ' not found.'  )  )
+  }
+
+  #
+  if( file.exists(file.path(getwd(), filename )) ){
+    filename = file.path( getwd(), filename )
   }
 
   #

@@ -81,7 +81,7 @@ sc.metacell.cluster <- function( object , cluster ,
     cell_number$target_n[  which( cell_number$target_n < min.target )  ] <- min.target
     if( !is.null( max.target ) ){   cell_number$target_n[  which( cell_number$target_n > max.target )  ] <- max.target  }
 
-    mtx_res <- ww.pblapply( cell_number$Var1  , function(x){
+    mtx_res <- ww.lapply( cell_number$Var1  , function(x){
       #
       s.matrix <- GE[ , object@meta.data[[ cluster ]]  == x  ]
 

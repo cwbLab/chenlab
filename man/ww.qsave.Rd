@@ -36,7 +36,7 @@ Set to \code{TRUE} to overwrite the existing file.}
 
 \item{compress_level}{As with \link[qs:qsave]{qs::qsave} or \link[qs2:qs_save]{qs2::qs_save}.}
 
-\item{shuffle}{As with the \link[qs2:qs_save]{qs2::qs_save}.}
+\item{shuffle}{As with \link[qs2:qs_save]{qs2::qs_save}.}
 
 \item{nthreads}{As with \link[qs:qsave]{qs::qsave} or \link[qs2:qs_save]{qs2::qs_save}, a single thread is used by default. It is recommended not to use too many cores, as excessive parallelism may increase thread scheduling overhead and lead to negative performance gains.}
 }

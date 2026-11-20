@@ -86,7 +86,7 @@ ww.sc.anno_based_gmt <- function( object , gmt , markers , markers.method =  'av
       message(  ww.log_time_title()   , '[ 3/4 ] Calculate the proportion of non-zero cells and marker abundance for each cluster.'  )
       split_data <- SplitObject(seurat_class)
       split_res <- lapply(split_data, function(x){ GetAssayData( x, layer = 'data' ) })
-      new_res <- ww.pblapply(1:nrow(ult_res),function(x){
+      new_res <- ww.lapply(1:nrow(ult_res),function(x){
         x = ult_res[x,] %>% unlist() %>% as.character()
         genes <- str_split(x[[2]],';')[[1]]
         proportin_res <- lapply(genes, function(y){

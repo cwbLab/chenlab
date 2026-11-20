@@ -36,7 +36,7 @@ ww.sc.cluster_clean <- function( object , group.by ,  reduction = "umap" , dims 
 
   all_group <- base::unique( seurat.obj$tempg )
   #
-  result <- ww.pblapply( all_group , function( cell ){
+  result <- ww.lapply( all_group , function( cell ){
 
     ######lof
     s.seurat <- subset( seurat.obj , tempg == cell )
