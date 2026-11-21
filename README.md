@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200"  src="https://github.com/cwbLab/chenlab/blob/main/Logo/chenlab-logo.png">
+  <img width="150"  src="https://github.com/cwbLab/chenlab/blob/main/Logo/chenlab-logo.png">
 </p>
 
 # chenlab
